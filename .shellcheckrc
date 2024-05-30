@@ -1,0 +1,3 @@
+# Disable warnings about other sh files that cannot be sourced
+disable=SC1090
+disable=SC1091
