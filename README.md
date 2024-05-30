@@ -22,6 +22,9 @@ Template: [https://github.com/mpark/wg21](https://github.com/mpark/wg21).
 * P3168R0:
   * [https://wg21.link/P3168R0](https://wg21.link/P3168R0), 2024-02-28
   * source: [P3168R0.md](./revisions/P3168R0.md)
+* P3168R1:
+  * [https://wg21.link/P3168R1](https://wg21.link/P3168R1), 2024-04-08
+  * source: [P3168R1.md](./revisions/P3168R1.md)
 
 ## Install Deps
 
