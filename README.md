@@ -1,8 +1,12 @@
-# WG21: ${PAPER_TITLE}
+# WG21 P3168R: Give std::optional Range Support
 
-This repo is a template used for making repos for creating papers for `WG21: C++ Standards Committee Papers`. Please remove this line after cloning the template.
+Authors: Marco Foco ([@mfoco](https://github.com/mfoco)), Darius Neațu ([@neatudarius](https://github.com/neatudarius)), Barry Revzin ([@brevzin](https://github.com/brevzin)), David Sankel ([@camio](https://github.com/camio))
 
-This repo is work for [WG21: C++ Standards Committee Papers](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/).
+Audience: Library Evolution
+
+Description: The standard library lacks facilities for optional types when doing range operations. While other solutions proposed creating a new type, this paper explores the design alternative where `std::optional` is made into a range. 
+
+> Note: This repo/paper is work for [WG21: C++ Standards Committee Papers](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/).
 
 
 ## Introduction
@@ -15,9 +19,9 @@ Template: [https://github.com/mpark/wg21](https://github.com/mpark/wg21).
 
 ## Published Revisions
 
-* ${PAPER_REVISION}:
-  * [https://wg21.link/${PAPER_REVISION}](https://wg21.link/${PAPER_REVISION}), ${DATE}
-  * souce: [${PAPER_REVISION}.md](./revisions/${PAPER_REVISION}.md)
+* P3168R0:
+  * [https://wg21.link/P3168R0](https://wg21.link/P3168R0), 2024-02-28
+  * source: [P3168R0.md](./revisions/P3168R0.md)
 
 ## Install Deps
 
