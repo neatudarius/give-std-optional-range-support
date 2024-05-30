@@ -8,17 +8,7 @@ Description: The standard library lacks facilities for optional types when doing
 
 > Note: This repo/paper is work for [WG21: C++ Standards Committee Papers](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/).
 
-
-## Introduction
-The top-level of this repository contains the source code for various proposals and the generated/ directory contains the generated proposals (HTML or PDF).
-
-This repository also includes a paper-writing framework using Pandoc.
-
-Template: [https://github.com/mpark/wg21](https://github.com/mpark/wg21).
-
-
 ## Published Revisions
-
 * P3168R0:
   * [https://wg21.link/P3168R0](https://wg21.link/P3168R0), 2024-02-28
   * source: [P3168R0.md](./revisions/P3168R0.md)
@@ -26,7 +16,20 @@ Template: [https://github.com/mpark/wg21](https://github.com/mpark/wg21).
   * [https://wg21.link/P3168R1](https://wg21.link/P3168R1), 2024-04-08
   * source: [P3168R1.md](./revisions/P3168R1.md)
 
-## Install Deps
+## Implementation experience
+
+TBD
+
+## Setup
+The top-level of this repository contains the source code for various proposals and the generated/ directory contains the generated proposals (HTML or PDF).
+
+This repository also includes a paper-writing framework using Pandoc.
+
+Template: [https://github.com/mpark/wg21](https://github.com/mpark/wg21).
+
+
+
+### Install Deps
 
 ```bash
 # actual install
@@ -36,14 +39,14 @@ $ deps/install.sh
 $ cd .git/hooks && ln -fs ../../.hooks/pre-push . && cd -
 ```
 
-## Export Papers
+### Export Papers
 
 ```bash
 $ make <paper>.pdf  # `<paper>.md` -> `generated/<paper>.pdf`
 $ make <paper>.html # `<paper>.md` -> `generated/<paper>.html`
 ```
 
-## Run Linters
+### Run Linters
 
 Linters are automatically run at `git push`. Check:
 ```bash
