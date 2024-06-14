@@ -18,7 +18,7 @@ Description: The standard library lacks facilities for optional types when doing
 
 ## Implementation experience
 
-TBD
+Implementation is done in [Beman.Optional26](https://github.com/beman-project/Optional26).
 
 ## Setup
 The top-level of this repository contains the source code for various proposals and the generated/ directory contains the generated proposals (HTML or PDF).
