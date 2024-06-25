@@ -2,3 +2,5 @@
 *.tex -linguist-detectable
 generated/* linguist-documentation
 wg21/* linguist-documentation
+*.md linguist-detectable
+*.markdown linguist-detectable
