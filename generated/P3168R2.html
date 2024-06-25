@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>
+        Give std::optional range support - HackMD
+    </title>
+    <link rel="icon" type="image/png" href="https://hackmd.io/favicon.png">
+    <link rel="apple-touch-icon" href="https://hackmd.io/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" integrity="sha256-3iu9jgsy9TpTwXKb7bNQzqWekRX7pPK+2OLj3R922fo=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css" integrity="sha256-QiWfLIsCT02Sdwkogf6YMiQlj4NE84MKkzEMkZnMGdg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css" integrity="sha256-vtR0hSWRc3Tb26iuN2oZHt3KRUomwTufNIf5/4oeCyg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@hackmd/emojify.js@2.1.0/dist/css/basic/emojify.min.css" integrity="sha256-UOrvMOsSDSrW6szVLe8ZDZezBxh5IoIfgTwdNDgTjiU=" crossorigin="anonymous" />
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i|Source+Code+Pro:300,400,500|Source+Sans+Pro:300,300i,400,400i,600,600i|Source+Serif+Pro&subset=latin-ext);.hljs{background:#fff;color:#333;display:block;overflow-x:auto;padding:.5em}.hljs-comment,.hljs-meta{color:#969896}.hljs-emphasis,.hljs-quote,.hljs-string,.hljs-strong,.hljs-template-variable,.hljs-variable{color:#df5000}.hljs-keyword,.hljs-selector-tag,.hljs-type{color:#a71d5d}.hljs-attribute,.hljs-bullet,.hljs-literal,.hljs-number,.hljs-symbol{color:#0086b3}.hljs-built_in,.hljs-builtin-name{color:#005cc5}.hljs-name,.hljs-section{color:#63a35c}.hljs-tag{color:#333}.hljs-attr,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-selector-pseudo,.hljs-title{color:#795da3}.hljs-addition{background-color:#eaffea;color:#55a532}.hljs-deletion{background-color:#ffecec;color:#bd2c00}.hljs-link{text-decoration:underline}.markdown-body{word-wrap:break-word;font-size:16px;line-height:1.5}.markdown-body:after,.markdown-body:before{content:"";display:table}.markdown-body:after{clear:both}.markdown-body>:first-child{margin-top:0!important}.markdown-body>:last-child{margin-bottom:0!important}.markdown-body a:not([href]){color:inherit;text-decoration:none}.markdown-body .absent{color:#c00}.markdown-body .anchor{float:left;line-height:1;margin-left:-20px;padding-right:4px}.markdown-body .anchor:focus{outline:none}.markdown-body blockquote,.markdown-body dl,.markdown-body ol,.markdown-body p,.markdown-body pre,.markdown-body table,.markdown-body ul{margin-bottom:16px;margin-top:0}.markdown-body hr{background-color:#e7e7e7;border:0;height:.25em;margin:24px 0;padding:0}.markdown-body blockquote{border-left:.25em solid #ddd;color:#777;font-size:16px;padding:0 1em}.markdown-body blockquote>:first-child{margin-top:0}.markdown-body blockquote>:last-child{margin-bottom:0}.markdown-body kbd,.popover kbd{background-color:#fcfcfc;border:1px solid;border-color:#ccc #ccc #bbb;border-radius:3px;box-shadow:inset 0 -1px 0 #bbb;color:#555;display:inline-block;font-size:11px;line-height:10px;padding:3px 5px;vertical-align:middle}.markdown-body .loweralpha{list-style-type:lower-alpha}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{font-weight:600;line-height:1.25;margin-bottom:16px;margin-top:24px}.markdown-body h1 .octicon-link,.markdown-body h2 .octicon-link,.markdown-body h3 .octicon-link,.markdown-body h4 .octicon-link,.markdown-body h5 .octicon-link,.markdown-body h6 .octicon-link{color:#000;vertical-align:middle;visibility:hidden}.markdown-body h1:hover .anchor,.markdown-body h2:hover .anchor,.markdown-body h3:hover .anchor,.markdown-body h4:hover .anchor,.markdown-body h5:hover .anchor,.markdown-body h6:hover .anchor{text-decoration:none}.markdown-body h1:hover .anchor .octicon-link,.markdown-body h2:hover .anchor .octicon-link,.markdown-body h3:hover .anchor .octicon-link,.markdown-body h4:hover .anchor .octicon-link,.markdown-body h5:hover .anchor .octicon-link,.markdown-body h6:hover .anchor .octicon-link{visibility:visible}.markdown-body h1 code,.markdown-body h1 tt,.markdown-body h2 code,.markdown-body h2 tt,.markdown-body h3 code,.markdown-body h3 tt,.markdown-body h4 code,.markdown-body h4 tt,.markdown-body h5 code,.markdown-body h5 tt,.markdown-body h6 code,.markdown-body h6 tt{font-size:inherit}.markdown-body h1{font-size:2em}.markdown-body h1,.markdown-body h2{border-bottom:1px solid #eee;padding-bottom:.3em}.markdown-body h2{font-size:1.5em}.markdown-body h3{font-size:1.25em}.markdown-body h4{font-size:1em}.markdown-body h5{font-size:.875em}.markdown-body h6{color:#777;font-size:.85em}.markdown-body ol,.markdown-body ul{padding-left:2em}.markdown-body ol.no-list,.markdown-body ul.no-list{list-style-type:none;padding:0}.markdown-body ol ol,.markdown-body ol ul,.markdown-body ul ol,.markdown-body ul ul{margin-bottom:0;margin-top:0}.markdown-body li>p{margin-top:16px}.markdown-body li+li{padding-top:.25em}.markdown-body dl{padding:0}.markdown-body dl dt{font-size:1em;font-style:italic;font-weight:700;margin-top:16px;padding:0}.markdown-body dl dd{margin-bottom:16px;padding:0 16px}.markdown-body table{display:block;overflow:auto;width:100%;word-break:normal;word-break:keep-all}.markdown-body table th{font-weight:700}.markdown-body table td,.markdown-body table th{border:1px solid #ddd;padding:6px 13px}.markdown-body table tr{background-color:#fff;border-top:1px solid #ccc}.markdown-body table tr:nth-child(2n){background-color:#f8f8f8}.markdown-body img{background-color:#fff;box-sizing:initial;max-width:100%}.markdown-body img[align=right]{padding-left:20px}.markdown-body img[align=left]{padding-right:20px}.markdown-body .emoji{background-color:initial;max-width:none;vertical-align:text-top}.markdown-body span.frame{display:block;overflow:hidden}.markdown-body span.frame>span{border:1px solid #ddd;display:block;float:left;margin:13px 0 0;overflow:hidden;padding:7px;width:auto}.markdown-body span.frame span img{display:block;float:left}.markdown-body span.frame span span{clear:both;color:#333;display:block;padding:5px 0 0}.markdown-body span.align-center{clear:both;display:block;overflow:hidden}.markdown-body span.align-center>span{display:block;margin:13px auto 0;overflow:hidden;text-align:center}.markdown-body span.align-center span img{margin:0 auto;text-align:center}.markdown-body span.align-right{clear:both;display:block;overflow:hidden}.markdown-body span.align-right>span{display:block;margin:13px 0 0;overflow:hidden;text-align:right}.markdown-body span.align-right span img{margin:0;text-align:right}.markdown-body span.float-left{display:block;float:left;margin-right:13px;overflow:hidden}.markdown-body span.float-left span{margin:13px 0 0}.markdown-body span.float-right{display:block;float:right;margin-left:13px;overflow:hidden}.markdown-body span.float-right>span{display:block;margin:13px auto 0;overflow:hidden;text-align:right}.markdown-body code,.markdown-body tt{background-color:#0000000a;border-radius:3px;font-size:85%;margin:0;padding:.2em 0}.markdown-body code:after,.markdown-body code:before,.markdown-body tt:after,.markdown-body tt:before{content:"\00a0";letter-spacing:-.2em}.markdown-body code br,.markdown-body tt br{display:none}.markdown-body del code{text-decoration:inherit}.markdown-body pre{word-wrap:normal}.markdown-body pre>code{background:#0000;border:0;font-size:100%;margin:0;padding:0;white-space:pre;word-break:normal}.markdown-body .highlight{margin-bottom:16px}.markdown-body .highlight pre{margin-bottom:0;word-break:normal}.markdown-body .highlight pre,.markdown-body pre{border-radius:3px;font-size:85%;line-height:1.45;overflow:auto}.markdown-body:not(.next-editor) pre{background-color:#f7f7f7;padding:16px}.markdown-body pre code,.markdown-body pre tt{word-wrap:normal;background-color:initial;border:0;display:inline;line-height:inherit;margin:0;max-width:auto;overflow:visible;padding:0}.markdown-body pre code:after,.markdown-body pre code:before,.markdown-body pre tt:after,.markdown-body pre tt:before{content:normal}.markdown-body .csv-data td,.markdown-body .csv-data th{font-size:12px;line-height:1;overflow:hidden;padding:5px;text-align:left;white-space:nowrap}.markdown-body .csv-data .blob-line-num{background:#fff;border:0;padding:10px 8px 9px;text-align:right}.markdown-body .csv-data tr{border-top:0}.markdown-body .csv-data th{background:#f8f8f8;border-top:0;font-weight:700}.news .alert .markdown-body blockquote{border:0;padding:0 0 0 40px}.activity-tab .news .alert .commits,.activity-tab .news .markdown-body blockquote{padding-left:0}.task-list-item{list-style-type:none}.task-list-item label{font-weight:400}.task-list-item.enabled label{cursor:pointer}.task-list-item+.task-list-item{margin-top:3px}.task-list-item-checkbox{cursor:default!important;float:left;margin:.31em 0 .2em -1.3em!important;vertical-align:middle}.markdown-alert{border-left-style:solid;border-left-width:4px;color:inherit;margin-bottom:16px;padding:8px 16px}.markdown-alert .markdown-alert-title{align-items:center;display:flex;font-weight:500;line-height:1;white-space:break-spaces}.markdown-body .markdown-alert>*{margin-bottom:0;margin-top:16px}.markdown-body .markdown-alert .selection-popover,.markdown-body .markdown-alert>:first-child{margin-top:0}.markdown-alert.markdown-alert-note{border-left-color:#0969da}.markdown-alert.markdown-alert-note .markdown-alert-title{fill:currentColor;color:#0969da}.markdown-alert.markdown-alert-tip{border-left-color:#1a7f37}.markdown-alert.markdown-alert-tip .markdown-alert-title{fill:currentColor;color:#1a7f37}.markdown-alert.markdown-alert-important{border-left-color:#8250df}.markdown-alert.markdown-alert-important .markdown-alert-title{fill:currentColor;color:#8250df}.markdown-alert.markdown-alert-warning{border-left-color:#9a6700}.markdown-alert.markdown-alert-warning .markdown-alert-title{fill:currentColor;color:#9a6700}.markdown-alert.markdown-alert-caution{border-left-color:#d1242f}.markdown-alert.markdown-alert-caution .markdown-alert-title{fill:currentColor;color:#d1242f}.markdown-body{max-width:758px;overflow:visible!important;padding-bottom:40px;padding-top:40px;position:relative}.markdown-body.next-editor{overflow-x:hidden!important}.markdown-body .emoji{vertical-align:top}.markdown-body pre{border:inherit!important}.markdown-body code{color:inherit!important}.markdown-body pre code .wrapper{display:-moz-inline-flex;display:-ms-inline-flex;display:-o-inline-flex;display:inline-flex}.markdown-body pre code .gutter{float:left;overflow:hidden;-webkit-user-select:none;user-select:none}.markdown-body pre code .gutter.linenumber{border-right:3px solid #6ce26c!important;box-sizing:initial;color:#afafaf!important;cursor:default;display:inline-block;min-width:20px;padding:0 8px 0 0;position:relative;text-align:right;z-index:4}.markdown-body pre code .gutter.linenumber>span:before{content:attr(data-linenumber)}.markdown-body pre code .code{float:left;margin:0 0 0 16px}.markdown-body .gist .line-numbers{border-bottom:none;border-left:none;border-top:none}.markdown-body .gist .line-data{border:none}.markdown-body .gist table{border-collapse:inherit!important;border-spacing:0}.markdown-body code[data-gist-id]{background:none;padding:0}.markdown-body code[data-gist-id]:after,.markdown-body code[data-gist-id]:before{content:""}.markdown-body code[data-gist-id] .blob-num{border:unset}.markdown-body code[data-gist-id] table{margin-bottom:unset;overflow:unset}.markdown-body code[data-gist-id] table tr{background:unset}.markdown-body[dir=rtl] pre{direction:ltr}.markdown-body[dir=rtl] code{direction:ltr;unicode-bidi:embed}.markdown-body .alert{display:flex;flex-direction:column;gap:16px}.markdown-body .alert>*{margin:0}.markdown-body pre.abc,.markdown-body pre.flow-chart,.markdown-body pre.graphviz,.markdown-body pre.mermaid,.markdown-body pre.sequence-diagram,.markdown-body pre.vega{background-color:inherit;border-radius:0;overflow:visible;text-align:center;white-space:inherit}.markdown-body pre.abc>code,.markdown-body pre.flow-chart>code,.markdown-body pre.graphviz>code,.markdown-body pre.mermaid>code,.markdown-body pre.sequence-diagram>code,.markdown-body pre.vega>code{text-align:left}.markdown-body pre.abc>svg,.markdown-body pre.flow-chart>svg,.markdown-body pre.graphviz>svg,.markdown-body pre.mermaid>svg,.markdown-body pre.sequence-diagram>svg,.markdown-body pre.vega>svg{height:100%;max-width:100%}.markdown-body pre>code.wrap{word-wrap:break-word;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap}.markdown-body pre.pseudocode{white-space-collapse:collapse}.markdown-body summary{display:list-item}.markdown-body summary:focus{outline:none}.markdown-body details summary{cursor:pointer}.markdown-body details:not([open])>:not(summary){display:none}.markdown-body figure{margin:1em 40px}.markdown-body .mark,.markdown-body mark{background-color:#fff1a7}.vimeo,.youtube{background-color:#000;background-position:50%;background-repeat:no-repeat;background-size:contain;cursor:pointer;display:table;overflow:hidden;text-align:center}.vimeo,.youtube{position:relative;width:100%}.youtube{padding-bottom:56.25%}.vimeo img{object-fit:contain;width:100%;z-index:0}.youtube img{object-fit:cover;z-index:0}.vimeo iframe,.youtube iframe,.youtube img{height:100%;left:0;position:absolute;top:0;width:100%}.vimeo iframe,.youtube iframe{vertical-align:middle;z-index:1}.vimeo .icon,.youtube .icon{color:#fff;height:auto;left:50%;opacity:.3;position:absolute;top:50%;transform:translate(-50%,-50%);transition:opacity .2s;width:auto;z-index:0}.vimeo:hover .icon,.youtube:hover .icon{opacity:.6;transition:opacity .2s}.slideshare .inner,.speakerdeck .inner{position:relative;width:100%}.slideshare .inner iframe,.speakerdeck .inner iframe{bottom:0;height:100%;left:0;position:absolute;right:0;top:0;width:100%}.figma{display:table;padding-bottom:56.25%;position:relative;width:100%}.figma iframe{border:1px solid #eee;bottom:0;height:100%;left:0;position:absolute;right:0;top:0;width:100%}.markmap-container{height:300px}.markmap-container>svg{height:100%;width:100%}.MJX_Assistive_MathML{display:none}#MathJax_Message{z-index:1000!important}.ui-infobar{color:#777;margin:25px auto -25px;max-width:760px;position:relative;z-index:2}.toc .invisable-node{list-style-type:none}.ui-toc{bottom:20px;position:fixed;z-index:998}.ui-toc.both-mode{margin-left:8px}.ui-toc.both-mode .ui-toc-label{border-bottom-left-radius:0;border-top-left-radius:0;height:40px;padding:10px 4px}.ui-toc-label{background-color:#e6e6e6;border:none;color:#868686;transition:opacity .2s}.ui-toc .open .ui-toc-label{color:#fff;opacity:1;transition:opacity .2s}.ui-toc-label:focus{background-color:#ccc;color:#000;opacity:.3}.ui-toc-label:hover{background-color:#ccc;opacity:1;transition:opacity .2s}.ui-toc-dropdown{margin-bottom:20px;margin-top:20px;max-height:70vh;max-width:45vw;overflow:auto;padding-left:10px;padding-right:10px;text-align:inherit;width:25vw}.ui-toc-dropdown>.toc{max-height:calc(70vh - 100px);overflow:auto}.ui-toc-dropdown[dir=rtl] .nav{letter-spacing:.0029em;padding-right:0}.ui-toc-dropdown a{overflow:hidden;text-overflow:ellipsis;white-space:pre}.ui-toc-dropdown .nav>li>a{color:#767676;display:block;font-size:13px;font-weight:500;padding:4px 20px}.ui-toc-dropdown .nav>li:first-child:last-child>ul,.ui-toc-dropdown .toc.expand ul{display:block}.ui-toc-dropdown .nav>li>a:focus,.ui-toc-dropdown .nav>li>a:hover{background-color:initial;border-left:1px solid #000;color:#000;padding-left:19px;text-decoration:none}.ui-toc-dropdown[dir=rtl] .nav>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav>li>a:hover{border-left:none;border-right:1px solid #000;padding-right:19px}.ui-toc-dropdown .nav>.active:focus>a,.ui-toc-dropdown .nav>.active:hover>a,.ui-toc-dropdown .nav>.active>a{background-color:initial;border-left:2px solid #000;color:#000;font-weight:700;padding-left:18px}.ui-toc-dropdown[dir=rtl] .nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav>.active>a{border-left:none;border-right:2px solid #000;padding-right:18px}.ui-toc-dropdown .nav .nav{display:none;padding-bottom:10px}.ui-toc-dropdown .nav>.active>ul{display:block}.ui-toc-dropdown .nav .nav>li>a{font-size:12px;font-weight:400;padding-bottom:1px;padding-left:30px;padding-top:1px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>a{padding-right:30px}.ui-toc-dropdown .nav .nav>li>ul>li>a{font-size:12px;font-weight:400;padding-bottom:1px;padding-left:40px;padding-top:1px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a{padding-right:40px}.ui-toc-dropdown .nav .nav>li>a:focus,.ui-toc-dropdown .nav .nav>li>a:hover{padding-left:29px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav .nav>li>a:hover{padding-right:29px}.ui-toc-dropdown .nav .nav>li>ul>li>a:focus,.ui-toc-dropdown .nav .nav>li>ul>li>a:hover{padding-left:39px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:hover{padding-right:39px}.ui-toc-dropdown .nav .nav>.active:focus>a,.ui-toc-dropdown .nav .nav>.active:hover>a,.ui-toc-dropdown .nav .nav>.active>a{font-weight:500;padding-left:28px}.ui-toc-dropdown[dir=rtl] .nav .nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>a{padding-right:28px}.ui-toc-dropdown .nav .nav>.active>.nav>.active:focus>a,.ui-toc-dropdown .nav .nav>.active>.nav>.active:hover>a,.ui-toc-dropdown .nav .nav>.active>.nav>.active>a{font-weight:500;padding-left:38px}.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active>a{padding-right:38px}.markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html[lang^=ja] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ ゴシック,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html[lang=zh-tw] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html[lang=zh-cn] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html .markdown-body[lang^=ja]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ ゴシック,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html .markdown-body[lang=zh-tw]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html .markdown-body[lang=zh-cn]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html[lang^=ja] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Meiryo UI,MS PGothic,ＭＳ Ｐゴシック,sans-serif}html[lang=zh-tw] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Microsoft JhengHei UI,微軟正黑UI,sans-serif}html[lang=zh-cn] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Microsoft YaHei UI,微软雅黑UI,sans-serif}html .ui-toc-dropdown[lang^=ja]{font-family:Source Sans Pro,Helvetica,Arial,Meiryo UI,MS PGothic,ＭＳ Ｐゴシック,sans-serif}html .ui-toc-dropdown[lang=zh-tw]{font-family:Source Sans Pro,Helvetica,Arial,Microsoft JhengHei UI,微軟正黑UI,sans-serif}html .ui-toc-dropdown[lang=zh-cn]{font-family:Source Sans Pro,Helvetica,Arial,Microsoft YaHei UI,微软雅黑UI,sans-serif}.ui-affix-toc{max-height:70vh;max-width:15vw;overflow:auto;position:fixed;top:0}.back-to-top,.expand-toggle,.go-to-bottom{color:#999;display:block;font-size:12px;font-weight:500;margin-left:10px;margin-top:10px;padding:4px 10px}.back-to-top:focus,.back-to-top:hover,.expand-toggle:focus,.expand-toggle:hover,.go-to-bottom:focus,.go-to-bottom:hover{color:#563d7c;text-decoration:none}.back-to-top,.go-to-bottom{margin-top:0}.ui-user-icon{background-position:50%;background-repeat:no-repeat;background-size:cover;border-radius:50%;display:block;height:20px;margin-bottom:2px;margin-right:5px;margin-top:2px;width:20px}.ui-user-icon.small{display:inline-block;height:18px;margin:0 0 .2em;vertical-align:middle;width:18px}.ui-infobar>small>span{line-height:22px}.ui-infobar>small .dropdown{display:inline-block}.ui-infobar>small .dropdown a:focus,.ui-infobar>small .dropdown a:hover{text-decoration:none}.ui-more-info{color:#888;cursor:pointer;vertical-align:middle}.ui-more-info .fa{font-size:16px}.ui-connectedGithub,.ui-published-note{color:#888}.ui-connectedGithub{line-height:23px;white-space:nowrap}.ui-connectedGithub a.file-path{color:#888;padding-left:22px;text-decoration:none}.ui-connectedGithub a.file-path:active,.ui-connectedGithub a.file-path:hover{color:#888;text-decoration:underline}.ui-connectedGithub .fa{font-size:20px}.ui-published-note .fa{font-size:20px;vertical-align:top}.unselectable{-webkit-user-select:none;-o-user-select:none;user-select:none}.selectable{-webkit-user-select:text;-o-user-select:text;user-select:text}.inline-spoiler-section{cursor:pointer}.inline-spoiler-section .spoiler-text{background-color:#333;border-radius:2px}.inline-spoiler-section .spoiler-text>*{opacity:0}.inline-spoiler-section .spoiler-img{filter:blur(10px)}.inline-spoiler-section.raw{background-color:#333;border-radius:2px}.inline-spoiler-section.raw>*{opacity:0}.inline-spoiler-section.unveil{cursor:auto}.inline-spoiler-section.unveil .spoiler-text{background-color:#3333331a}.inline-spoiler-section.unveil .spoiler-text>*{opacity:1}.inline-spoiler-section.unveil .spoiler-img{filter:none}@media print{blockquote,div,img,pre,table{page-break-inside:avoid!important}a[href]:after{font-size:12px!important}}.markdown-body.slides{color:#222;position:relative;z-index:1}.markdown-body.slides:before{background-color:currentColor;bottom:0;box-shadow:0 0 0 50vw;content:"";display:block;left:0;position:absolute;right:0;top:0;z-index:-1}.markdown-body.slides section[data-markdown]{background-color:#fff;margin-bottom:1.5em;position:relative;text-align:center}.markdown-body.slides section[data-markdown] code{text-align:left}.markdown-body.slides section[data-markdown]:before{content:"";display:block;padding-bottom:56.23%}.markdown-body.slides section[data-markdown]>div:first-child{left:1em;max-height:100%;overflow:hidden;position:absolute;right:1em;top:50%;transform:translateY(-50%)}.markdown-body.slides section[data-markdown]>ul{display:inline-block}.markdown-body.slides>section>section+section:after{border:3px solid #777;content:"";height:1.5em;position:absolute;right:1em;top:-1.5em}.site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,sans-serif}html[lang^=ja] .site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ ゴシック,sans-serif}html[lang=zh-tw] .site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] .site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}body{font-smoothing:subpixel-antialiased!important;-webkit-font-smoothing:subpixel-antialiased!important;-moz-osx-font-smoothing:auto!important;-webkit-overflow-scrolling:touch;font-family:Source Sans Pro,Helvetica,Arial,sans-serif;letter-spacing:.025em}html[lang^=ja] body{font-family:Source Sans Pro,Helvetica,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ ゴシック,sans-serif}html[lang=zh-tw] body{font-family:Source Sans Pro,Helvetica,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] body{font-family:Source Sans Pro,Helvetica,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}abbr[data-original-title],abbr[title]{cursor:help}body.modal-open{overflow-y:auto;padding-right:0!important}svg{text-shadow:none}
+    </style>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js" integrity="sha256-3Jy/GbSLrg0o9y5Z5n1uw0qxZECH7C6OQpVBgNFYa0g=" crossorigin="anonymous"></script>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js" integrity="sha256-g6iAfvZp+nDQ2TdTR/VVKJf3bGro4ub5fvWSWVRi2NE=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js" integrity="sha256-8E4Is26QH0bD52WoQpcB+R/tcWQtpzlCojrybUd7Mxo=" crossorigin="anonymous"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div id="doc" class="markdown-body container-fluid comment-enabled" data-hard-breaks="true" style=""><h1 id="Give-stdoptional-Range-Support" data-id="Give-stdoptional-Range-Support" style=""><a class="anchor hidden-xs" href="#Give-stdoptional-Range-Support" title="Give-stdoptional-Range-Support"><span class="octicon octicon-link"></span></a><span>Give </span><em><span>std::optional</span></em><span> Range Support</span></h1><p><strong><span>Document number</span></strong><span>: P3168R2</span><br>
+<strong><span>Date</span></strong><span>: 2024-04-25</span><br>
+<strong><span>Authors</span></strong><span>: Marco Foco &lt;</span><a href="mailto:marco.foco@gmail.com" target="_blank" rel="noopener"><span>marco.foco@gmail.com</span></a><span>&gt;, Darius Neațu &lt;</span><a href="mailto:dariusn@adobe.com" target="_blank" rel="noopener"><span>dariusn@adobe.com</span></a><span>&gt;, Barry Revzin &lt;</span><a href="mailto:barry.revzin@gmail.com" target="_blank" rel="noopener"><span>barry.revzin@gmail.com</span></a><span>&gt;, David Sankel &lt;</span><a href="mailto:dsankel@adobe.com" target="_blank" rel="noopener"><span>dsankel@adobe.com</span></a><span>&gt;</span><br>
+<strong><span>Audience</span></strong><span>: Library Evolution</span></p><h2 id="Abstract" data-id="Abstract" style=""><a class="anchor hidden-xs" href="#Abstract" title="Abstract"><span class="octicon octicon-link"></span></a><span>Abstract</span></h2><p><span>In </span><a href="https://wg21.link/P1255R12" target="_blank" rel="noopener"><em><span>P1255R12: A view of 0 or 1 elements: </span><code>views::maybe</code></em></a><span>, Steve Downey explores the benefits of an optional type that models the range concept and concludes that a new optional type with range support, </span><code>std::views::maybe</code><span>, should be introduced into the standard library. This paper explores the design alternative where, instead of introducing a new type, </span><code>std::optional</code><span> is made into a range. Observing that this improves usage examples and is dramatically more straightforward, we recommend this approach over that of P1255R12.</span></p><table style="overflow: visible;font-size:12px;">
+<tbody><tr>
+</tr><tr>
+<td colspan="2">
+<pre data-original-title="" title=""><code class="cpp hljs"><span class="token comment">// A person's attributes (e.g., eye color). All attributes are optional.</span>
+<span class="token keyword">class</span> <span class="token class-name">Person</span> <span class="token punctuation">{</span>                        
+    <span class="token comment">/* ... */</span>                               
+<span class="token keyword">public</span><span class="token operator">:</span>                               
+    optional<span class="token operator">&lt;</span>string<span class="token operator">&gt;</span> <span class="token function">eye_color</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">const</span><span class="token punctuation">;</span>   
+<span class="token punctuation">}</span><span class="token punctuation">;</span>                                    
+    
+vector<span class="token operator">&lt;</span>Person<span class="token operator">&gt;</span> people <span class="token operator">=</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">;</span>         
+</code></pre>
+</td>
+</tr>
+<tr><th style="text-align:center; vertical-align:middle">P1255R12</th><th style="text-align:center; vertical-align:middle">This Proposal</th>
+</tr>
+<tr>
+<td style="text-align:left; vertical-align:top;">
+<pre><code class="cpp hljs"><span class="token comment">// Compute eye colors of 'people'.</span>
+vector<span class="token operator">&lt;</span>string<span class="token operator">&gt;</span> eye_colors <span class="token operator">=</span> people
+  <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span><span class="token function">transform</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>Person<span class="token double-colon punctuation">::</span>eye_color<span class="token punctuation">)</span>
+  <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span><span class="token function">transform</span><span class="token punctuation">(</span>views<span class="token double-colon punctuation">::</span>nullable<span class="token punctuation">)</span>
+  <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span>join
+  <span class="token operator">|</span> ranges<span class="token double-colon punctuation">::</span><span class="token generic-function"><span class="token function">to</span><span class="token generic class-name"><span class="token operator">&lt;</span>set<span class="token operator">&gt;</span></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token operator">|</span> ranges<span class="token double-colon punctuation">::</span><span class="token generic-function"><span class="token function">to</span><span class="token generic class-name"><span class="token operator">&lt;</span>vector<span class="token operator">&gt;</span></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</td>
+<td style="text-align:left; vertical-align:top;">
+<pre><code class="cpp hljs"><span class="token comment">// Compute eye colors of 'people'.</span>
+vector<span class="token operator">&lt;</span>string<span class="token operator">&gt;</span> eye_colors <span class="token operator">=</span> people
+  <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span><span class="token function">transform</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>Person<span class="token double-colon punctuation">::</span>eye_color<span class="token punctuation">)</span>
+  <span class="token comment">// no extra wrapping necessary</span>
+  <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span>join
+  <span class="token operator">|</span> ranges<span class="token double-colon punctuation">::</span><span class="token generic-function"><span class="token function">to</span><span class="token generic class-name"><span class="token operator">&lt;</span>set<span class="token operator">&gt;</span></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token operator">|</span> ranges<span class="token double-colon punctuation">::</span><span class="token generic-function"><span class="token function">to</span><span class="token generic class-name"><span class="token operator">&lt;</span>vector<span class="token operator">&gt;</span></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</td>
+</tr>
+</tbody></table><h2 id="Changelog" data-id="Changelog" style=""><a class="anchor hidden-xs" href="#Changelog" title="Changelog"><span class="octicon octicon-link"></span></a><span>Changelog</span></h2><ul>
+<li>
+<p><span>R2:</span></p>
+<ul>
+<li><span>Fix typo in </span><a href="#Wording"><span>Wording</span></a><span>.</span></li>
+<li><span>Add the </span><a href="#P3168R1"><span>LEWG Feedback#P3168R1</span></a><span> subsection: results of the LEWG electronic polls.</span></li>
+<li><span>Add the </span><a href="#BemanOptional26"><span>Implementation experience#Beman.Optional26</span></a><span> subsection:</span>
+<ul>
+<li><span>Beman.Optional26: a fully functional implementation within the Beman Project.</span></li>
+<li><span>An alpha version is available on Compiler Explorer (refer to the examples).</span></li>
+<li><span>Evaluated using the most recent versions of GCC and Clang compilers in accordance with the latest C++ standards.</span></li>
+<li><span>Link the P3168 examples implemented in Compiler Explorer.</span></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><span>R1:</span></p>
+<ul>
+<li><span>Add the </span><a href="#changelog"><span>Changelog</span></a><span> section.</span></li>
+<li><a href="#Choice-of-type-for-iterator"><span>Choice of type for iterator</span></a><span>  section discusses rationale for move from </span><code><span>T*</span></code><span> to </span><code><span>implementation-defined</span></code><span> for iterator types.</span></li>
+<li><a href="#Additional-iterator-types"><span>Additional iterator types</span></a><span> section discusses rationale for adding only </span><code><span>begin()</span></code><span> / </span><code><span>end()</span></code><span> APIs to </span><code><span>std::optional</span></code><span>.</span></li>
+<li><a href="#Wording"><span>Wording</span></a><span> updates:</span>
+<ul>
+<li><span>Opt out formatter range support for optional.</span></li>
+<li><span>Change the return type of iteration functions from </span><code><span>T*</span></code><span> to iterator and family.</span></li>
+<li><span>Remove </span><code><span>{r, c}</span></code><span> family methods.</span></li>
+<li><span>Add feature test macro.</span></li>
+</ul>
+</li>
+<li><span>Add the </span><a href="#LEWG-feedback"><span>LEWG Feedback</span></a><span> section: mention feedback after the Tokyo 2024 review.</span></li>
+<li><span>Add the </span><a href="#Implementation-experience"><span>Implementation experience</span></a><span> section.</span></li>
+</ul>
+</li>
+<li>
+<p><span>R0: Proposal and draft wording.</span></p>
+</li>
+</ul><h2 id="Introduction" data-id="Introduction" style=""><a class="anchor hidden-xs" href="#Introduction" title="Introduction"><span class="octicon octicon-link"></span></a><span>Introduction</span></h2><p><code>std::optional&lt;T&gt;</code><span>, a class template that "may or may not store a value of type </span><code>T</code><span> in its storage space" was introduced by Fernando Cacciola and Andrezej Krzemieński's </span><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3793.html" target="_blank" rel="noopener"><em><span>A proposal to add a utility class to represent optional objects (N3793)</span></em></a><span>. This feature was incorporated into C++17 and has since seen frequent use in data members, function parameters, and function return types.</span></p><p><span>Ranges were introduced into C++20 with Eric Niebler et al.'s </span><a href="https://wg21.link/p0896r4" target="_blank" rel="noopener"><em><span>The One Ranges Proposal (P0896R4)</span></em></a><span> as a set of standard library concepts and algorithms that simplify algorithm composition and usage.</span></p><p><span>As usage experience of both </span><code>std::optional</code><span> and ranges has grown, it became apparent that treating </span><code>std::optional</code><span> objects as ranges is quite useful, especially in algorithmic contexts. Steve Downey in </span><a href="https://wg21.link/p1255r12" target="_blank" rel="noopener"><em><span>A view of 0 or 1 elements: </span><code>views::maybe</code><span> (P1255R12)</span></em></a><span> showcases many examples where algorithm readability improves when </span><code>std::optional</code><span> objects are treated as ranges.</span></p><p><span>Downey proposed two facilities that integrate </span><code>std::optional</code><span> and ranges:</span></p><ol>
+<li><code>views::nullable</code><span>. A range adapter producing a view over </span><code>std::optional</code><span> objects and, more generally, any dereferencable object with a bool conversion.</span></li>
+<li><code>views::maybe</code><span>. A data type with the same semantics as </span><code>std::optional</code><span> with the some key interface differences. We will discuss these differences a little later.</span></li>
+</ol><p><span>Downey suggests </span><code>std::maybe_view</code><span> be used instead of </span><code>std::optional</code><span> for return types and other situations where "the value will have operations applied if present, and ignored otherwise." Furthermore, Downey claims "</span><code>std::optional</code><span> is filling too many roles" and is not "directly safe", unlike </span><code>std::maybe_view</code><span>.</span></p><p><span>While we support </span><code>views::nullable</code><span>, we find the addition of the </span><code>std::maybe_view</code><span> contrary to the principles of simplicity and genericity. Instead, we propose making </span><code>std::optional</code><span> a range.</span></p><p><span>This paper highlights the principles behind our design alternative, outlines the drawbacks of adding a new </span><code>std::optional</code><span>-like type, surveys existing practice, and demonstrates how our proposal simplifies all of P1255R12's examples.</span></p><h2 id="Principles" data-id="Principles" style=""><a class="anchor hidden-xs" href="#Principles" title="Principles"><span class="octicon octicon-link"></span></a><span>Principles</span></h2><p><span>Two design principles directly apply to the rangification of </span><em><span>std::optional</span></em><span>: genericity and simplicity.</span></p><p><span>Alex Stepanov, the progenitor of much of the C++ standard library, repeatedly emphasized the importance of genericity for software reuse. In </span><a href="http://stepanovpapers.com/DeSt98.pdf" target="_blank" rel="noopener"><em><span>Fundamentals of Generic Programming</span></em></a><span> he and James C. Dehnert wrote:</span></p><blockquote>
+<p><span>Generic programming recognizes that dramatic productivity improvements must come from reuse without modification, as with the successful libraries. Breadth of use, however, must come from the separation of underlying data types, data structures, and algorithms, allowing users to combine components of each sort from either the library or their own code. Accomplishing this requires more than just simple, abstract interfaces – it requires that a wide variety of components share the same interface so that they can be substituted for one another. It is vital that we go beyond the old library model of reusing identical interfaces with pre-determined types, to one which identifies the minimal requirements on interfaces and allows reuse by similar interfaces which meet those requirements but may differ quite widely otherwise. Sharing similar interfaces across a wide variety of components requires careful identification and abstraction of the patterns of use in many programs, as well as development of techniques for effectively mapping one interface to another.</span></p>
+</blockquote><p><span>Simplicity, the second applicable principle, makes C++ easier to learn and use, increasing its applicability to different problem domains. The direction group in </span><a href="https://wg21.link/P2000R4" target="_blank" rel="noopener"><em><span>Direction for ISO C++ (P2000R4)</span></em></a><span> sees "C++ in danger of losing coherency due to proposals based on differing and sometimes mutually contradictory design philosophies and differing stylistic tastes." and David Sankel highlights the impact on training costs in </span><a href="https://wg21.link/P3023R1" target="_blank" rel="noopener"><em><span>C++ Should Be C++</span></em></a><span>.</span></p><p><span>With genericity and simplicity in mind, let us now investigate the proposed </span><code>std::maybe_view&lt;T&gt;</code><span>. In essence, it "may or may not store a value of type </span><code>T</code><span> in its storage space". The wording used here is notably </span><em><span>identical</span></em><span> to that of the proposal that introduced optional</span><sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup><span>. This duplication alone is cause for concern due to the complexity of having multiple standardized types representing the same thing.</span></p><p><span>Indeed, the interfaces of the two types have a substantial amount in common. In the table below, let </span><code>V</code><span> be some type, </span><code>Opt</code><span> be either </span><code>optional&lt;V&gt;</code><span> or </span><code>maybe_view&lt;V&gt;</code><span>, </span><code>o</code><span> and </span><code>o2</code><span> be objects of type </span><code>Opt</code><span>, and </span><code>v</code><span> be an object of type </span><code>V</code><span>:</span></p><table>
+<thead>
+<tr>
+<th><code>std::optional&lt;V&gt;</code></th>
+<th><span>both</span></th>
+<th><span>Proposed </span><code>std::maybe_view&lt;V&gt;</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Opt(nullopt)</code></td>
+<td><code>Opt()</code></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><code>Opt(v)</code></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><code>Opt(in_place, v)</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>o = nullopt;</code></td>
+<td><code>o = v;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>o.emplace(v);</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>o.reset();</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>o.swap(o2);</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><code>o == o2</code><span> and </span><code>o &lt;=&gt; o2</code></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><code>o == v</code><span> and </span><code>o &lt;=&gt; v</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>*o</code><span> and </span><code>o-&gt;m</code></td>
+<td><code>o.transform(f)</code></td>
+<td><code>o.begin()</code><span> and </span><code>o.end()</code></td>
+</tr>
+<tr>
+<td><code>o.has_value()</code><span> and </span><code>bool(o)</code></td>
+<td><code>o.and_then(f)</code></td>
+<td><code>o.size()</code></td>
+</tr>
+<tr>
+<td><code>o.value_or(v)</code></td>
+<td><code>o.or_else(f)</code></td>
+<td><code>o.data()</code></td>
+</tr>
+<tr>
+<td><code>std::hash&lt;Opt&gt;{}(o)</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table><p><span>Nevertheless, Downey argues that the interface differences make this new type worthwhile. Consider each of these differences:</span></p><ol>
+<li>
+<p><strong><code>std::maybe_view</code><span> lacks a dereference operator and boolean conversion</span></strong><span>. Dereference and boolean conversion are the standard interface to optional-like objects and originate in nullable C pointers. Generic algorithms that today output both a </span><code>vector&lt;optional&lt;T&gt;&gt;</code><span> and a </span><code>vector&lt;shared_ptr&lt;T&gt;&gt;</code><span> using optional-like interfaces, will not work with a </span><code>vector&lt;maybe_view&lt;T&gt;&gt;</code><span>. This interface difference goes against genericity.</span></p>
+</li>
+<li>
+<p><strong><code>std::maybe_view</code><span> contains some, but not all, accessors</span></strong><span>. </span><code>std::maybe_view</code><span> provides the continuation functions </span><code>transform</code><span>, </span><code>and_then</code><span>, and </span><code>or_else</code><span> but not </span><code>value_or</code><span>. What's the motivation for this omission? A GitHub search</span><sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup><span> results in 111k uses of </span><code>value_or</code><span>. If we add future accessors to </span><code>std::optional</code><span>, what will be the basis for deciding whether they should be added to </span><code>std::maybe_view</code><span>?</span></p>
+</li>
+<li>
+<p><strong><code>std::maybe_view</code><span>'s template parameter supports references</span></strong><span>. This is fixing a defect of </span><code>std::optional</code><span> that is already being fixed with Steve Downey and Peter Sommerlad's </span><a href="https://wg21.link/P2988R3" target="_blank" rel="noopener"><code>std::optional&lt;T&amp;&gt;</code></a><span> paper.</span></p>
+</li>
+<li>
+<p><strong><code>std::maybe_view</code><span> satisfies the </span><code>range</code><span> concept</span></strong><span>. This interface difference allows </span><code>std::maybe_view</code><span> to be used in more algorithms than </span><code>std::optional</code><span>, which is great. However, if this is the only viable interface difference, we should add range support to </span><code>std::optional</code><span> to avoid confusing users with two otherwise identical types. This interface difference goes against simplicity.</span></p>
+</li>
+</ol><p><span>The standard providing two almost identical types will result in </span><a href="https://en.wikipedia.org/wiki/Overchoice" target="_blank" rel="noopener"><span>choice overload</span></a><span>, which is mentally draining. Downey suggests using </span><code>std::maybe_view</code><span> when "the value will have operations applied if present, and ignored otherwise." For a return type, how could one know if this will be the case for a caller? For an argument type, this may be true for one implementation, but what if it changes? Users should not have to spend mental energy considering questions like these.</span></p><h2 id="Survey-of-existing-practice" data-id="Survey-of-existing-practice" style=""><a class="anchor hidden-xs" href="#Survey-of-existing-practice" title="Survey-of-existing-practice"><span class="octicon octicon-link"></span></a><span>Survey of existing practice</span></h2><p><span>Since its standardization, </span><code>std::optional</code><span>'s usage has increased in modern C++ codebases. Iterating over this standard type is a recurring topic as shown in forum discussions such as </span><a href="https://stackoverflow.com/questions/72812599/iterating-over-stdoptional" target="_blank" rel="noopener"><span>Iterating over std::optional</span></a><span> and </span><a href="https://www.reddit.com/r/cpp/comments/17tyd44/begin_and_end_iterators_for_stdoptional_how_to/" target="_blank" rel="noopener"><span>begin and end iterators for std::optional?</span></a><span>.</span></p><p><span>Some in the C++ community have already experienced this idea. </span><a href="https://github.com/seleznevae/owi_optional" target="_blank" rel="noopener"><span>owi_optional</span></a><span> is an open-source implementation. The following code snippet shows an example using syntax similar to our proposal:</span></p><pre><code class="cpp hljs"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"owi/optional.hpp"</span></span>
+
+owi<span class="token double-colon punctuation">::</span>optional<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">&gt;</span> empty<span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">:</span> empty<span class="token punctuation">)</span> <span class="token punctuation">{</span>   <span class="token comment">// iterating over empty optional</span>
+    std<span class="token double-colon punctuation">::</span>cout <span class="token operator">&lt;&lt;</span> i<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+owi<span class="token double-colon punctuation">::</span>optional<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">&gt;</span> opt<span class="token punctuation">{</span> <span class="token number">123</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">:</span> opt<span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// iterating over non-empty optional</span>
+    std<span class="token double-colon punctuation">::</span>cout <span class="token operator">&lt;&lt;</span> i<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><p><span>Several other programming languages with </span><code>std::optional</code><span>-like types allow direct iteration. </span><a href="https://doc.rust-lang.org/std/option/#iterating-over-option" target="_blank" rel="noopener"><span>Rust's Option</span></a><span> type and </span><a href="https://www.scala-lang.org/api/2.13.5/scala/Option.htm" target="_blank" rel="noopener"><span>Scala's Option</span></a><span> are notable examples. The following code illustrates a typical Rust usage example:</span></p><pre><code class="rust hljs"><span class="token keyword">let</span> yep <span class="token operator">=</span> <span class="token class-name">Some</span><span class="token punctuation">(</span><span class="token number">42</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">let</span> nope <span class="token operator">=</span> <span class="token class-name">None</span><span class="token punctuation">;</span>
+<span class="token comment">// chain() already calls into_iter(), so we don't have to do so</span>
+<span class="token keyword">let</span> nums<span class="token punctuation">:</span> <span class="token class-name">Vec</span><span class="token operator">&lt;</span><span class="token keyword">i32</span><span class="token operator">&gt;</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">..</span><span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">chain</span><span class="token punctuation">(</span>yep<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">chain</span><span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">..</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">collect</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token macro property">assert_eq!</span><span class="token punctuation">(</span>nums<span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">42</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token number">6</span><span class="token punctuation">,</span> <span class="token number">7</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">let</span> nums<span class="token punctuation">:</span> <span class="token class-name">Vec</span><span class="token operator">&lt;</span><span class="token keyword">i32</span><span class="token operator">&gt;</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">..</span><span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">chain</span><span class="token punctuation">(</span>nope<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">chain</span><span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">..</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">collect</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token macro property">assert_eq!</span><span class="token punctuation">(</span>nums<span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token number">6</span><span class="token punctuation">,</span> <span class="token number">7</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre><h2 id="Proposal" data-id="Proposal" style=""><a class="anchor hidden-xs" href="#Proposal" title="Proposal"><span class="octicon octicon-link"></span></a><span>Proposal</span></h2><p><span>We propose a simple design alternative to P1255R12: make </span><code>std::optional</code><span> satisfy the </span><code>ranges::range</code><span> concept where iterating over a </span><code>std::optional</code><span> object will iterate over its 0 or 1 elements.</span></p><h3 id="To-view-or-not-to-view" data-id="To-view-or-not-to-view" style=""><a class="anchor hidden-xs" href="#To-view-or-not-to-view" title="To-view-or-not-to-view"><span class="octicon octicon-link"></span></a><span>To </span><code>view</code><span> or not to </span><code>view</code></h3><p><span>As with the proposed </span><code>std::maybe_view</code><span>, </span><code>std::optional</code><span> should be a </span><code>view</code><span>. As it only ever has at most one element, it would satisfy the semantic requirements.</span></p><p><span>The question is </span><em><span>how</span></em><span> to opt </span><code>std::optional</code><span> into being a </span><code>view</code><span>. There are two ways to do this:</span></p><ol>
+<li><span>Change </span><code>std::optional&lt;T&gt;</code><span> to inherit from </span><code>std::ranges::view_interface&lt;std::optional&lt;T&gt;&gt;</code><span>, or</span></li>
+<li><span>Specialize </span><code>std::ranges::enable_view&lt;std::optional&lt;T&gt;&gt;</code><span> to </span><code>true</code><span>.</span></li>
+</ol><p><span>The problem with inheriting from </span><code>ranges::view_interface</code><span>, separate from any questions of ABI and the like, are that it would bring in more functions into </span><code>std::optional</code><span>'s public interface: </span><code>empty()</code><span>, </span><code>data()</code><span>, </span><code>size()</code><span>, </span><code>front()</code><span>, </span><code>back()</code><span>, and </span><code>operator[]()</code><span>. While </span><code>empty()</code><span> is potentially sensible (if unnecessary given that both </span><code>has_value()</code><span> and </span><code>operator bool</code><span> exist), the rest are actively undesirable. Note that all the accessor objects in </span><code>std::ranges</code><span> will still work (e.g. </span><code>std::ranges::size</code><span>, </span><code>std::ranges::data</code><span>, etc.) simply from providing </span><code>begin()</code><span> and </span><code>end()</code><span>.</span></p><p><span>So we propose instead to specialize </span><code>ranges::enable_view</code><span> (similar to </span><code>std::string_view</code><span> and </span><code>std::span</code><span>).</span></p><p><code>std::optional&lt;T&gt;</code><span> is not a borrowed range, although </span><code>std::optional&lt;T&amp;&gt;</code><span> (when added) would be.</span></p><h3 id="Choice-of-type-for-iterator" data-id="Choice-of-type-for-iterator" style=""><a class="anchor hidden-xs" href="#Choice-of-type-for-iterator" title="Choice-of-type-for-iterator"><span class="octicon octicon-link"></span></a><span>Choice of type for </span><code>iterator</code></h3><p><code>optional&lt;T&gt;</code><span> is a contiguous, sized range, so the simplest choice of iterator is </span><code>T*</code><span>. The original revision of this paper simply chose </span><code>T*</code><span> (and </span><code>T const*</code><span>) for the iterator types.</span></p><p><span>However, there are some benefits to having a distinct iterator type: it prevents some misuse and some potential confusion from code of the form:</span></p><pre><code class="cpp hljs"><span class="token keyword">void</span> <span class="token function">takes_pointer</span><span class="token punctuation">(</span>T <span class="token keyword">const</span><span class="token operator">*</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+<span class="token keyword">void</span> <span class="token function">f</span><span class="token punctuation">(</span>optional<span class="token operator">&lt;</span>T<span class="token operator">&gt;</span> <span class="token keyword">const</span><span class="token operator">&amp;</span> o<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// what does this mean?</span>
+    T <span class="token keyword">const</span><span class="token operator">*</span> p <span class="token operator">=</span> o<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
+    
+    <span class="token comment">// do we want this to work?</span>
+    <span class="token function">takes_pointer</span><span class="token punctuation">(</span>o<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    <span class="token comment">// or this?</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>o<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">/* ... */</span> <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><p><span>Users might misinterpret </span><code>p</code><span> to always point to the storage for the </span><code>T</code><span> object in the disengaged case and think they might be able to </span><em><span>placement-new</span></em><span> on top of it (even though </span><code>begin()</code><span> should ideally return </span><code>nullptr</code><span> for the disengaged case). The call to </span><code>takes_pointer</code><span> is not really something we intend on supporting. Likewise the conversion to </span><code>bool</code><span>.</span></p><p><span>The goal of </span><code>begin()</code><span> and </span><code>end()</code><span> is simply to provide the range interface for </span><code>optional</code><span>, so they should be the </span><em><span>minimal</span></em><span> implementation to provide that functionality without unintentionally introducing other functionality.</span></p><p><span>As such, a better choice (as discussed in Tokyo) would be to make the </span><code>iterator</code><span> and </span><code>const_iterator</code><span> types implementation-defined, where the implementations would hopefully provide some class type to catch many such misuses.</span></p><h3 id="Additional-iterator-types" data-id="Additional-iterator-types" style=""><a class="anchor hidden-xs" href="#Additional-iterator-types" title="Additional-iterator-types"><span class="octicon octicon-link"></span></a><span>Additional iterator types</span></h3><p><span>Typically, containers provide a large assortment of iterators. In addition to the </span><code>iterator</code><span> you get from </span><code>begin()</code><span>/</span><code>end()</code><span>, there is also a</span><code>reverse_iterator</code><span> (from </span><code>rbegin()</code><span>/</span><code>rend()</code><span>), a </span><code>const_iterator</code><span> (from </span><code>cbegin()</code><span>/</span><code>cend()</code><span>), and a </span><code>const_reverse_iterator</code><span> (from </span><code>crbegin()</code><span>/</span><code>crend()</code><span>). The original revision of this paper provided the full set of iterator algorithms.</span></p><p><span>However, we think this is unnecessary for the same reason it is unnecessary to provide </span><code>data()</code><span> and </span><code>size()</code><span>.</span></p><p><code>ranges::cbegin()</code><span> and </span><code>ranges::cend()</code><span> will already work and correctly provide </span><code>const_iterator</code><span>, so there is no benefit to providing it directly. Generic code should already be using those function objects rather than attempting to call member </span><code>cbegin()</code><span> and </span><code>cend()</code><span> directly.</span></p><p><span>Similarly, </span><code>ranges::rbegin()</code><span> and </span><code>ranges::rend()</code><span> will already work and correctly provide a </span><code>reverse_iterator</code><span>. Indeed, for all containers in the standard library, member </span><code>rbegin</code><span> and </span><code>rend</code><span> already do the same thing that </span><code>ranges::rbegin</code><span> and </span><code>ranges::rend</code><span> would do anyway.</span></p><p><span>Interestingly, in this particular case, </span><code>optional</code><span> could do better. Since our size is at most </span><code>1</code><span>, reversing an </span><code>optional</code><span> is a no-op: </span><code>rbegin()</code><span> could simply be implemented to return </span><code>begin()</code><span> as an optimization. However, given that our </span><code>iterator</code><span> is contiguous, the added overhead of </span><code>std::reverse_iterator</code><span> will get optimized out anyway.</span></p><p><span>Given that neither </span><code>cbegin</code><span> nor </span><code>rbegin</code><span> add value, </span><code>crbegin</code><span> certainly doesn't either.</span></p><p><span>We therefore propose to provide the minimal interface to opt into ranges: simply </span><code>begin()</code><span> and </span><code>end()</code><span>. All the functionality is there for the user if they want to use the </span><code>ranges::</code><span> objects.</span></p><h2 id="Wording" data-id="Wording" style=""><a class="anchor hidden-xs" href="#Wording" title="Wording"><span class="octicon octicon-link"></span></a><span>Wording</span></h2><h4 id="optionalsyn" data-id="optionalsyn"><a class="anchor hidden-xs" href="#optionalsyn" title="optionalsyn"><span class="octicon octicon-link"></span></a><a href="https://eel.is/c++draft/optional.syn" rel="noopener" target="_blank"><span>[optional.syn]</span></a></h4><p><span>Add the specialization of </span><code><span>ranges::enable_view</span></code><span> and </span><code><span>format_kind</span></code><span> to </span><code><span>[optional.syn]</span></code><span> right after the </span><code><span>class optional</span></code><span> declaration:</span></p><pre><code class="diff hljs">namespace std {
+  // [optional.optional], class template optional
+  template&lt;class T&gt;
+    class optional;                                     // partially freestanding
+  
+<span class="hljs-addition">+ template&lt;class T&gt;</span>
+<span class="hljs-addition">+   constexpr bool ranges::enable_view&lt;optional&lt;T&gt;&gt; = true;   </span>
+<span class="hljs-addition">+ template&lt;class T&gt;</span>
+<span class="hljs-addition">+   constexpr auto format_kind&lt;optional&lt;T&gt;&gt; = range_format::disabled;</span>
+
+  template&lt;class T&gt;
+    concept is-derived-from-optional = requires(const T&amp; t) {  // exposition only
+        []&lt;class U&gt;(const optional&lt;U&gt;&amp;){ }(t);
+    };
+  // ...
+}
+</code></pre><h4 id="optionaloptionalgeneral" data-id="optionaloptionalgeneral"><a class="anchor hidden-xs" href="#optionaloptionalgeneral" title="optionaloptionalgeneral"><span class="octicon octicon-link"></span></a><a href="https://eel.is/c++draft/optional.optional.general" rel="noopener" target="_blank"><span>[optional.optional.general]</span></a></h4><p><span>Add:</span></p><ul>
+<li><span>the iterator types right after definition of </span><code><span>value_type</span></code></li>
+<li><span>the range accessors to </span><code><span>[optional.optional.general]</span></code><span> right before the </span><code><span>observers</span></code></li>
+</ul><pre><code class="diff hljs">namespace std {
+  template&lt;class T&gt;
+  class optional {
+  public:
+    using value_type             = T;
+<span class="hljs-addition">+   using iterator               = implementation-defined; // see [optional.iterators]</span>
+<span class="hljs-addition">+   using const_iterator         = implementation-defined; // see [optional.iterators]</span>
+
+    // ...
+
+    // [optional.swap], swap
+    constexpr void swap(optional&amp;) noexcept(see below);
+
+    
+<span class="hljs-addition">+   // [optional.iterators], iterator support</span>
+<span class="hljs-addition">+   constexpr iterator begin() noexcept;</span>
+<span class="hljs-addition">+   constexpr const_iterator begin() const noexcept;</span>
+<span class="hljs-addition">+   constexpr iterator end() noexcept;</span>
+<span class="hljs-addition">+   constexpr const_iterator end() const noexcept;    </span>
+    
+    // [optional.observe], observers
+    constexpr const T* operator-&gt;() const noexcept;
+    // ...
+  };
+}
+</code></pre><h4 id="optionaliterators" data-id="optionaliterators"><a class="anchor hidden-xs" href="#optionaliterators" title="optionaliterators"><span class="octicon octicon-link"></span></a><span>[optional.iterators]</span></h4><p><span>Add a new clause </span><code><span>[optional.iterators]</span></code><span> between </span><a href="https://eel.is/c++draft/optional.swap" target="_blank" rel="noopener"><span>[optional.swap]</span></a><span>  and </span><a href="https://eel.is/c++draft/optional.observe" target="_blank" rel="noopener"><span>[optional.observe]</span></a><span>:</span></p><blockquote>
+Iterator support                                          [optional.iterators]
+<pre><code class="cpp hljs"><span class="token keyword">using</span> iterator       <span class="token operator">=</span> implementation<span class="token operator">-</span>defined<span class="token punctuation">;</span>
+<span class="token keyword">using</span> const_iterator <span class="token operator">=</span> implementation<span class="token operator">-</span>defined<span class="token punctuation">;</span>
+</code></pre>
+<p><span>These types model contiguous_iterator ([iterator.concept.contiguous]), meet the Cpp17RandomAccessIterator requirements ([random.access.iterators]), and meet the requirements for constexpr iterators ([iterator.requirements.general]), with value type </span><code><span>remove_cv_t</span>&lt;T&gt;</code><span>. The reference type is </span><code><span>T&amp;</span></code><span> for </span><code><span>iterator</span></code><span> and </span><code><span>const T&amp;</span></code><span> for </span><code><span>const_iterator</span></code><span>.</span></p>
+<p><span>All requirements on container iterators ([container.reqmts]) apply to </span><code><span>optional::iterator</span></code><span> and </span><code><span>optional::const_iterator</span></code><span> as well.</span></p>
+<p><span>Any operation that initializes or destroys the contained value of an optional object invalidates all iterators into that object.</span></p>
+<pre><code class="cpp hljs"><span class="token keyword">constexpr</span> iterator <span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">noexcept</span><span class="token punctuation">;</span>
+<span class="token keyword">constexpr</span> const_iterator <span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">const</span> <span class="token keyword">noexcept</span><span class="token punctuation">;</span>
+</code></pre>
+<p><em><span>Returns</span></em><span>: If </span><code><span>has_value()</span></code><span> is true, an iterator referring to the contained value. Otherwise, a past-the-end iterator value.</span></p>
+<pre><code class="cpp hljs"><span class="token keyword">constexpr</span> iterator <span class="token function">end</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">noexcept</span><span class="token punctuation">;</span>
+<span class="token keyword">constexpr</span> const_iterator <span class="token function">end</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">const</span> <span class="token keyword">noexcept</span><span class="token punctuation">;</span>
+</code></pre>
+<p><em><span>Returns</span></em><span>: </span><code><span>begin() + has_value()</span></code><span>.</span></p>
+</blockquote><h4 id="versionsyn" data-id="versionsyn"><a class="anchor hidden-xs" href="#versionsyn" title="versionsyn"><span class="octicon octicon-link"></span></a><a href="https://eel.is/c++draft/version.syn" rel="noopener" target="_blank"><span>[version.syn]</span></a></h4><p><span>Add the following macro definition to </span><code><span>[version.syn]</span></code><span>, header </span><code>&lt;version&gt;</code><span> synopsis, with the value selected by the editor to reflect the date of adoption of this paper:</span></p><pre><code class="diff hljs">    #define __cpp_lib_optional 202110L // also in &lt;optional&gt;
+<span class="hljs-addition">+   #define __cpp_lib_optional_range_support 20XXXXL // freestanding, also in &lt;optional&gt;</span>
+    #define __cpp_lib_out_ptr 202106L // also in &lt;memory&gt;
+</code></pre><h2 id="LEWG-feedback" data-id="LEWG-feedback" style=""><a class="anchor hidden-xs" href="#LEWG-feedback" title="LEWG-feedback"><span class="octicon octicon-link"></span></a><span>LEWG feedback</span></h2><h3 id="P3168R0" data-id="P3168R0" style=""><a class="anchor hidden-xs" href="#P3168R0" title="P3168R0"><span class="octicon octicon-link"></span></a><span>P3168R0</span></h3><p><span>P3168R0 was reviewed during the LEWG sessions at Tokyo 2024. It was decided to proceed with our proposed solution, albeit with a few changes.</span></p><p><span>Tokyo 2024 P3168R0 related polls:</span></p><ol>
+<li>
+<blockquote>
+<p><span>We want to make optional satisfy the range concept.</span></p>
+</blockquote>
+</li>
+</ol><table>
+<thead>
+<tr>
+<th><span>SF</span></th>
+<th><span>F</span></th>
+<th><span>N</span></th>
+<th><span>A</span></th>
+<th><span>SA</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span>11</span></td>
+<td><span>8</span></td>
+<td><span>2</span></td>
+<td><span>3</span></td>
+<td><span>0</span></td>
+</tr>
+</tbody>
+</table><ul>
+<li><span>Attendance: </span><code>20 + 9</code></li>
+<li><span># of Authors: </span><code>4</code></li>
+<li><span>Authors’ position: </span><code>3 x SF, WF</code><br>
+<span>Outcome: </span><code>Consensus in favour</code></li>
+</ul><ol start="2">
+<li>
+<blockquote>
+<p><span>Modify P3168R0 (Give std::optional Range Support) by opting out of formatter range support for optional and changing the return type of iterator functions from T* to iterator and family, and then send the revised paper to LWG for C++26 classified as B2, to be confirmed with a Library Evolution electronic poll.</span></p>
+</blockquote>
+</li>
+</ol><table>
+<thead>
+<tr>
+<th><span>SF</span></th>
+<th><span>F</span></th>
+<th><span>N</span></th>
+<th><span>A</span></th>
+<th><span>SA</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span>11</span></td>
+<td><span>3</span></td>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>2</span></td>
+</tr>
+</tbody>
+</table><ul>
+<li><span>Attendance: </span><code>19 + 5</code></li>
+<li><span># of Authors: </span><code>1</code></li>
+<li><span>Authors’ position: </span><code>SF</code><br>
+<span>Outcome: </span><code>Consensus in favour</code></li>
+</ul><h3 id="P3168R1" data-id="P3168R1" style=""><a class="anchor hidden-xs" href="#P3168R1" title="P3168R1"><span class="octicon octicon-link"></span></a><span>P3168R1</span></h3><p><span>We applied the LEWG feedback from Tokyo into P3168R1. This revision was sent for </span><a href="https://wg21.link/P3213R0" target="_blank" rel="noopener"><em><span>2024-04 Library Evolution Polls (P3213R0)</span></em></a><span>. The results published in </span><a href="https://wg21.link/P3214R0" target="_blank" rel="noopener"><em><span>2024-04 Library Evolution Poll Outcomes (P3214R0)</span></em></a><span> revealed an expected consensus into forwarding this proposal to LWG.</span></p><blockquote>
+<p><span>Send "[P3168R1] Give std::optional range support" to Library Working Group for C++26.</span></p>
+</blockquote><table>
+<thead>
+<tr>
+<th><span>SF</span></th>
+<th><span>F</span></th>
+<th><span>N</span></th>
+<th><span>A</span></th>
+<th><span>SA</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span>10</span></td>
+<td><span>3</span></td>
+<td><span>1</span></td>
+<td><span>2</span></td>
+<td><span>3</span></td>
+</tr>
+</tbody>
+</table><h2 id="Implementation-experience" data-id="Implementation-experience" style=""><a class="anchor hidden-xs" href="#Implementation-experience" title="Implementation-experience"><span class="octicon octicon-link"></span></a><span>Implementation experience</span></h2><h3 id="Initial-experiments" data-id="Initial-experiments" style=""><a class="anchor hidden-xs" href="#Initial-experiments" title="Initial-experiments"><span class="octicon octicon-link"></span></a><span>Initial experiments</span></h3><p><span>To evaluate the effectiveness of the proposed </span><code>std::optional</code><span> modifications, we conducted extensive testing across two multi-million line internal Adobe repositories. This rigorous testing process revealed no build or test suite regressions, indicating a smooth integration of the modifications with existing codebases.</span></p><p><span>All future experiments and developments related to these modifications will be conducted within the </span><a href="https://www.bemanproject.org/" target="_blank" rel="noopener"><em><span>Beman Project</span></em></a><span>, ensuring a centralized approach for continuous integration and iterative improvements.</span></p><h3 id="BemanOptional26" data-id="BemanOptional26" style=""><a class="anchor hidden-xs" href="#BemanOptional26" title="BemanOptional26"><span class="octicon octicon-link"></span></a><span>Beman.Optional26</span></h3><p><span>P3168R1 is fully implemented within the </span><a href="https://www.bemanproject.org/" target="_blank" rel="noopener"><em><span>Beman Project</span></em></a><span>. The implementation, named </span><a href="https://github.com/beman-project/Optional26" target="_blank" rel="noopener"><span>Beman.Optional26</span></a><span>, aims to provide a comprehensive and standalone library that adheres to the proposal's specifications. This ongoing work demonstrates a commitment to ensuring the robustness and applicability of the </span><code>std::optional</code><span> enhancements in real-world scenarios.</span></p><h4 id="Dependencies" data-id="Dependencies"><a class="anchor hidden-xs" href="#Dependencies" title="Dependencies"><span class="octicon octicon-link"></span></a><span>Dependencies</span></h4><p><span>In the implementation of iterators for </span><code>Beman.Optional26</code><span>, we utilized the </span><a href="https://github.com/boostorg/stl_interfaces" target="_blank" rel="noopener"><span>boost/stl_interfaces</span></a><span> library, which implements Zach Laine's proposal for </span><a href="https://wg21.link/P2727R4" target="_blank" rel="noopener"><span>P2727R4: std::iterator_interface</span></a><span>. This choice was made to adhere to modern standards and ensure compatibility with proposed C++ features.</span></p><p><span>Currently, </span><code>Beman.Optional26</code><span> includes a subset of headers copied locally. However, for long-term sustainability, future iterations may consider integrating </span><code>stl_interfaces</code><span> as a direct dependency or implementing additional C++26-related proposals within the Beman library ecosystem. This approach aims to foster code reuse, maintain compliance with evolving standards, and facilitate broader community adoption.</span></p><h4 id="stdoptional-extensions" data-id="stdoptional-extensions"><a class="anchor hidden-xs" href="#stdoptional-extensions" title="stdoptional-extensions"><span class="octicon octicon-link"></span></a><em><span>std::optional</span></em><span> extensions</span></h4><p><span>Additionally, the </span><code>Beman.Optional26</code><span> library aims to support and integrate other upcoming C++26 features related to </span><code>std::optional</code><span>. For instance, it already includes implementation for </span><a href="https://wg21.link/P2988R5" target="_blank" rel="noopener"><span>P2988R5: std::optional&lt;T&amp;&gt;</span></a><span>, authored by Steve Downey and Peter Sommerlad. These efforts are geared towards expanding functionality and aligning with the latest developments in the C++ standard.</span></p><h4 id="Compiler-support" data-id="Compiler-support"><a class="anchor hidden-xs" href="#Compiler-support" title="Compiler-support"><span class="octicon octicon-link"></span></a><span>Compiler support</span></h4><p><span>We have tested and successfully compiled </span><a href="https://github.com/beman-project/Optional26" target="_blank" rel="noopener"><span>Beman.Optional26</span></a><span> with C++20, C++23 and C++26 on the latest versions of GCC (13, 14, trunk) and Clang (17, 18, 19, trunk), running on Ubuntu 24.04 (x86_64 and arm64) or </span><a href="https://godbolt.org/" target="_blank" rel="noopener"><span>Compiler Explorer</span></a><span>. This ensures compatibility and performance across a range of modern development environments.</span></p><p><span>Future integrations will test compatibility with the latest versions of MSVC and other major compilers, ensuring broad support across different platforms and toolchains.</span></p><h4 id="Integration-with-Compiler-Explorer" data-id="Integration-with-Compiler-Explorer"><a class="anchor hidden-xs" href="#Integration-with-Compiler-Explorer" title="Integration-with-Compiler-Explorer"><span class="octicon octicon-link"></span></a><span>Integration with Compiler Explorer</span></h4><p><span>We have made an </span><code>alpha version</code><span> of the </span><code>Beman.Optional26</code><span> library available on </span><a href="https://godbolt.org/" target="_blank" rel="noopener"><span>Compiler Explorer</span></a><span>, allowing developers to test and experiment with the new features directly in an interactive environment. This provides an accessible way for the community to engage with the implementation and offer feedback for further improvements.</span></p><p><span>To use the </span><code>Beman.Optional26</code><span> library inside Compiler Explorer, you need to create a default C++ entry, select </span><code>Current libraries</code><span>, search for </span><code>Beman.Optional26</code><span>, select the version (e.g., </span><code>trunk</code><span>), close the window, and try to compile.</span></p><h4 id="Examples" data-id="Examples"><a class="anchor hidden-xs" href="#Examples" title="Examples"><span class="octicon octicon-link"></span></a><span>Examples</span></h4><p><span>All examples related to P3168 can be found in </span><a href="https://github.com/beman-project/Optional26/tree/main/examples/README.md" target="_blank" rel="noopener"><span>examples/README.md</span></a><span> or in tests (</span><a href="https://github.com/beman-project/Optional26/tree/main/src/Beman/Optional26/tests/optional_range_support.t.cpp" target="_blank" rel="noopener"><span>optional_range_support.t.cpp</span></a><span>).</span></p><h5 id="Example-stdoptional-vs-bemanoptional26optional" data-id="Example-stdoptional-vs-bemanoptional26optional"><a class="anchor hidden-xs" href="#Example-stdoptional-vs-bemanoptional26optional" title="Example-stdoptional-vs-bemanoptional26optional"><span class="octicon octicon-link"></span></a><span>Example: </span><em><span>std::optional</span></em><span> vs </span><em><span>beman::optional26::optional</span></em></h5><p><span>The following code snippet demonstrates a </span><a href="https://godbolt.org/z/ds5MvfGe6" target="_blank" rel="noopener"><span>basic usage of Beman's optional compared with std::optional</span></a><span>:</span></p><pre><code class="cpp hljs"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;optional&gt;</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;Beman/Optional26/optional.hpp&gt;</span></span>
+
+<span class="token comment">// empty optional example</span>
+std<span class="token double-colon punctuation">::</span>optional<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">&gt;</span> std_empty_opt<span class="token punctuation">;</span>
+beman<span class="token double-colon punctuation">::</span>optional26<span class="token double-colon punctuation">::</span>optional<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">&gt;</span> beman_empty_opt<span class="token punctuation">;</span>
+<span class="token function">assert</span><span class="token punctuation">(</span><span class="token operator">!</span>std_empty_opt <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>beman_empty_opt<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// optional with value example</span>
+std<span class="token double-colon punctuation">::</span>optional<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">&gt;</span> std_opt <span class="token operator">=</span> <span class="token number">26</span><span class="token punctuation">;</span>
+beman<span class="token double-colon punctuation">::</span>optional26<span class="token double-colon punctuation">::</span>optional<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">&gt;</span> beman_opt <span class="token operator">=</span> <span class="token number">26</span><span class="token punctuation">;</span>
+<span class="token function">assert</span><span class="token punctuation">(</span>std_opt <span class="token operator">&amp;&amp;</span> beman_opt<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">assert</span><span class="token punctuation">(</span><span class="token operator">*</span>std_opt <span class="token operator">==</span> <span class="token operator">*</span>std_opt<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre><h5 id="Example-range-loop" data-id="Example-range-loop"><a class="anchor hidden-xs" href="#Example-range-loop" title="Example-range-loop"><span class="octicon octicon-link"></span></a><span>Example: range loop</span></h5><p><span>This example demonstrates a </span><a href="https://godbolt.org/z/f8dWaxsGo" target="_blank" rel="noopener"><span>basic range loop over Beman's optional</span></a><span>:</span></p><pre><code class="cpp hljs"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;Beman/Optional26/optional.hpp&gt;</span></span>
+
+<span class="token comment">// iterate over empty optional example</span>
+beman<span class="token double-colon punctuation">::</span>optional26<span class="token double-colon punctuation">::</span>optional<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">&gt;</span> empty_opt<span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">[</span>maybe_unused<span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token keyword">const</span> <span class="token keyword">auto</span><span class="token operator">&amp;</span> i <span class="token operator">:</span> empty_opt<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Should not see this in console.</span>
+    std<span class="token double-colon punctuation">::</span>cout <span class="token operator">&lt;&lt;</span> <span class="token string">"\"for each loop\" over C++26 optional: empty_opt\n"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// iterate over optional with value example</span>
+beman<span class="token double-colon punctuation">::</span>optional26<span class="token double-colon punctuation">::</span>optional<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">&gt;</span> opt<span class="token punctuation">{</span><span class="token number">26</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">auto</span><span class="token operator">&amp;</span> i <span class="token operator">:</span> opt<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Should see this in console.</span>
+    std<span class="token double-colon punctuation">::</span>cout <span class="token operator">&lt;&lt;</span> <span class="token string">"\"for each loop\" over C++26 optional: opt = "</span> <span class="token operator">&lt;&lt;</span> i <span class="token operator">&lt;&lt;</span> <span class="token string">"\n"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><h5 id="Example-Pythagorean-triples" data-id="Example-Pythagorean-triples"><a class="anchor hidden-xs" href="#Example-Pythagorean-triples" title="Example-Pythagorean-triples"><span class="octicon octicon-link"></span></a><span>Example: Pythagorean triples</span></h5><p><span>The </span><code>Beman.Optional26</code><span> library enables the support for complex examples, such as generating an </span><a href="https://godbolt.org/z/fGr8jYM6P" target="_blank" rel="noopener"><span>infinite sequence of Pythagorean triples</span></a><span>.</span></p><h2 id="Appendix-Comparison-P1255R12-vs-P3168R0" data-id="Appendix-Comparison-P1255R12-vs-P3168R0" style=""><a class="anchor hidden-xs" href="#Appendix-Comparison-P1255R12-vs-P3168R0" title="Appendix-Comparison-P1255R12-vs-P3168R0"><span class="octicon octicon-link"></span></a><span>Appendix: Comparison P1255R12 vs P3168R0</span></h2><p><span>This section compares examples from P1255R12 to equivalents using our own proposal.</span></p><h3 id="Optional-access" data-id="Optional-access" style=""><a class="anchor hidden-xs" href="#Optional-access" title="Optional-access"><span class="octicon octicon-link"></span></a><span>Optional access</span></h3><table style="overflow: visible;font-size:12px;">
+<tbody><tr>
+<th style="text-align:center; vertical-align:middle">P1255R12</th><th style="text-align:center; vertical-align:middle">This Proposal</th>
+</tr>
+<tr>
+<td style="text-align:left; vertical-align:top;">
+<pre><code class="cpp hljs"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">auto</span><span class="token operator">&amp;&amp;</span> opt <span class="token operator">:</span> views<span class="token double-colon punctuation">::</span><span class="token function">nullable</span><span class="token punctuation">(</span><span class="token function">get_optional</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// a few dozen lines...</span>
+    <span class="token function">use</span><span class="token punctuation">(</span>opt<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// opt is safe</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</td>
+<td style="text-align:left; vertical-align:top;">
+<pre><code class="cpp hljs"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">auto</span><span class="token operator">&amp;&amp;</span> opt <span class="token operator">:</span> <span class="token function">get_optional</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// a few dozen lines...</span>
+    <span class="token function">use</span><span class="token punctuation">(</span>opt<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// opt is safe</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</td>
+</tr>
+</tbody></table><h3 id="Optional-assignment" data-id="Optional-assignment" style=""><a class="anchor hidden-xs" href="#Optional-assignment" title="Optional-assignment"><span class="octicon octicon-link"></span></a><span>Optional assignment</span></h3><table style="overflow: visible;font-size:12px;">
+<tbody><tr>
+<th style="text-align:center; vertical-align:middle">P1255R12</th><th style="text-align:center; vertical-align:middle">This Proposal</th>
+</tr>
+<tr>
+<td style="text-align:left; vertical-align:top;">
+<pre><code class="wrap cpp hljs"><span class="token keyword">auto</span> opt_int <span class="token operator">=</span> <span class="token function">get_optional</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">auto</span><span class="token operator">&amp;&amp;</span> i <span class="token operator">:</span> views<span class="token double-colon punctuation">::</span><span class="token function">nullable</span><span class="token punctuation">(</span>std<span class="token double-colon punctuation">::</span><span class="token function">ref</span><span class="token punctuation">(</span>opt_int<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// a few dozen lines...</span>
+    i <span class="token operator">=</span> <span class="token number">123</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</td>
+<td style="text-align:left; vertical-align:top;">
+<pre><code class="cpp hljs"><span class="token keyword">auto</span> opt_int <span class="token operator">=</span> <span class="token function">get_optional</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">auto</span><span class="token operator">&amp;&amp;</span> i <span class="token operator">:</span> opt_int<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// a few dozen lines...</span>
+    i <span class="token operator">=</span> <span class="token number">123</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</td>
+</tr>
+</tbody></table><h3 id="Range-chain-example-1" data-id="Range-chain-example-1" style=""><a class="anchor hidden-xs" href="#Range-chain-example-1" title="Range-chain-example-1"><span class="octicon octicon-link"></span></a><span>Range chain example (1)</span></h3><table style="overflow: visible;font-size:12px;">
+<tbody><tr>
+</tr><tr>
+<td colspan="2">
+<pre><code class="cpp hljs">vector<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">&gt;</span> v<span class="token punctuation">{</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token number">6</span><span class="token punctuation">,</span> <span class="token number">7</span><span class="token punctuation">,</span> <span class="token number">8</span><span class="token punctuation">,</span> <span class="token number">9</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">auto</span> test <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token keyword">int</span> i<span class="token punctuation">)</span> <span class="token operator">-&gt;</span> optional<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">switch</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span> 
+        <span class="token keyword">case</span> <span class="token number">1</span><span class="token operator">:</span> 
+        <span class="token keyword">case</span> <span class="token number">3</span><span class="token operator">:</span> 
+        <span class="token keyword">case</span> <span class="token number">7</span><span class="token operator">:</span>
+        <span class="token keyword">case</span> <span class="token number">9</span><span class="token operator">:</span>
+            <span class="token keyword">return</span> i<span class="token punctuation">;</span> 
+        <span class="token keyword">default</span><span class="token operator">:</span> 
+            <span class="token keyword">return</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> 
+<span class="token punctuation">}</span><span class="token punctuation">;</span>  
+</code></pre>
+</td>
+</tr>
+<tr><th style="text-align:center; vertical-align:middle">P1255R12</th><th style="text-align:center; vertical-align:middle">This Proposal</th>
+</tr>
+<tr>
+<td style="text-align:left; vertical-align:top;">
+<pre><code class="cpp hljs"><span class="token keyword">auto</span><span class="token operator">&amp;&amp;</span> r <span class="token operator">=</span> v 
+    <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span><span class="token function">transform</span><span class="token punctuation">(</span>test<span class="token punctuation">)</span> 
+    <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span><span class="token function">transform</span><span class="token punctuation">(</span>views<span class="token double-colon punctuation">::</span>nullable<span class="token punctuation">)</span> 
+    <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span>join <span class="token operator">|</span> 
+    <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span><span class="token function">transform</span><span class="token punctuation">(</span>
+        <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token keyword">int</span> i<span class="token punctuation">)</span> <span class="token punctuation">{</span> cout <span class="token operator">&lt;&lt;</span> i<span class="token punctuation">;</span> <span class="token keyword">return</span> i<span class="token punctuation">;</span> <span class="token punctuation">}</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span> 
+</code></pre>
+</td>
+<td style="text-align:left; vertical-align:top;">
+<pre><code class="cpp hljs"><span class="token keyword">auto</span><span class="token operator">&amp;&amp;</span> r <span class="token operator">=</span> v 
+    <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span><span class="token function">transform</span><span class="token punctuation">(</span>test<span class="token punctuation">)</span>
+    <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span><span class="token function">filter</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token keyword">auto</span> x<span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token keyword">bool</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+    <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span><span class="token function">transform</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token keyword">auto</span> x<span class="token punctuation">)</span><span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token operator">*</span>x<span class="token punctuation">;</span> <span class="token punctuation">}</span><span class="token punctuation">)</span> 
+    <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span><span class="token function">transform</span><span class="token punctuation">(</span>
+        <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token keyword">int</span> i<span class="token punctuation">)</span> <span class="token punctuation">{</span> cout <span class="token operator">&lt;&lt;</span> i<span class="token punctuation">;</span> <span class="token keyword">return</span> i<span class="token punctuation">;</span> <span class="token punctuation">}</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span> 
+</code></pre>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<pre><code class="cpp hljs"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">auto</span><span class="token operator">&amp;&amp;</span> i <span class="token operator">:</span> r<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    std<span class="token double-colon punctuation">::</span>cout <span class="token operator">&lt;&lt;</span> i <span class="token operator">&lt;&lt;</span> <span class="token string">"\n"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</td>
+</tr>
+</tbody></table><h3 id="Range-chain-example-2" data-id="Range-chain-example-2" style=""><a class="anchor hidden-xs" href="#Range-chain-example-2" title="Range-chain-example-2"><span class="octicon octicon-link"></span></a><span>Range chain example (2)</span></h3><table style="overflow: visible;font-size:12px;">
+<tbody><tr>
+</tr><tr>
+<td colspan="2">
+<pre><code class="cpp hljs">unordered_set<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">&gt;</span> set<span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">7</span><span class="token punctuation">,</span> <span class="token number">9</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">auto</span> flt <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token operator">=</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token keyword">int</span> i<span class="token punctuation">)</span> <span class="token operator">-&gt;</span> optional<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>set<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> i<span class="token punctuation">;</span>
+    <span class="token keyword">else</span> 
+        <span class="token keyword">return</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span> 
+<span class="token punctuation">}</span><span class="token punctuation">;</span> 
+</code></pre>
+</td>
+</tr>
+<tr><th style="text-align:center; vertical-align:middle">P1255R12</th><th style="text-align:center; vertical-align:middle">This Proposal</th>
+</tr>
+<tr>
+<td style="text-align:left; vertical-align:top;">
+<pre><code class="cpp hljs"><span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">auto</span> i <span class="token operator">:</span> views<span class="token double-colon punctuation">::</span>iota<span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">10</span><span class="token punctuation">}</span> <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span><span class="token function">transform</span><span class="token punctuation">(</span>flt<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> 
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">auto</span> j <span class="token operator">:</span> views<span class="token double-colon punctuation">::</span><span class="token function">nullable</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> 
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">auto</span> k <span class="token operator">:</span> views<span class="token double-colon punctuation">::</span><span class="token function">iota</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> j<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            cout <span class="token operator">&lt;&lt;</span><span class="token char">'\a'</span><span class="token punctuation">;</span> 
+        cout <span class="token operator">&lt;&lt;</span> <span class="token char">'\n'</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</td>
+<td style="text-align:left; vertical-align:top;">
+<pre><code class="cpp hljs"><span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">auto</span> i <span class="token operator">:</span> views<span class="token double-colon punctuation">::</span>iota<span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">10</span><span class="token punctuation">}</span> <span class="token operator">|</span> views<span class="token double-colon punctuation">::</span><span class="token function">transform</span><span class="token punctuation">(</span>flt<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> 
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">auto</span> j <span class="token operator">:</span> i<span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// no need to transform</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">auto</span> k<span class="token operator">:</span> views<span class="token double-colon punctuation">::</span><span class="token function">iota</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> j<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            cout <span class="token operator">&lt;&lt;</span><span class="token char">'\a'</span><span class="token punctuation">;</span> 
+        cout <span class="token operator">&lt;&lt;</span> <span class="token char">'\n'</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</td>
+</tr>
+</tbody></table><h3 id="yield_if" data-id="yield_if" style=""><a class="anchor hidden-xs" href="#yield_if" title="yield_if"><span class="octicon octicon-link"></span></a><span>yield_if</span></h3><p><span>Eric Niebler’s </span><a href="https://ericniebler.com/2018/12/05/standard-ranges/" target="_blank" rel="noopener"><span>Pythagorian Triples</span></a><span> triple example:</span></p><table style="overflow: visible;font-size:12px;">
+<tbody><tr>
+<th style="text-align:center; vertical-align:middle">P1255R12</th><th style="text-align:center; vertical-align:middle">This Proposal</th>
+</tr>
+<tr>
+<td style="text-align:left; vertical-align:top;">
+<pre><code class="cpp hljs"><span class="token keyword">auto</span> yield_if <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">&lt;</span><span class="token keyword">class</span> <span class="token class-name">T</span><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token keyword">bool</span> b<span class="token punctuation">,</span> T x<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> b <span class="token operator">?</span> 
+        maybe_view<span class="token operator">&lt;</span>T<span class="token operator">&gt;</span><span class="token punctuation">{</span><span class="token function">move</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">}</span> <span class="token operator">:</span>
+        maybe_view<span class="token operator">&lt;</span>T<span class="token operator">&gt;</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span> 
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre>
+</td>
+<td style="text-align:left; vertical-align:top;">
+<pre><code class="cpp hljs"><span class="token keyword">auto</span> yield_if <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">&lt;</span><span class="token keyword">class</span> <span class="token class-name">T</span><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token keyword">bool</span> b<span class="token punctuation">,</span> T x<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> b <span class="token operator">?</span>
+        optional<span class="token operator">&lt;</span>T<span class="token operator">&gt;</span><span class="token punctuation">{</span><span class="token function">move</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">}</span> <span class="token operator">:</span>
+        nullopt<span class="token punctuation">;</span> 
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre>
+</td>
+</tr>
+</tbody></table><h2 id="References" data-id="References" style=""><a class="anchor hidden-xs" href="#References" title="References"><span class="octicon octicon-link"></span></a><span>References</span></h2><ul>
+<li><span>Fernando Cacciola and Andrzej Krzemieński. N3793: A proposal to add a utility class to represent optional objects (Revision 5). </span><a href="https://wg21.link/N3793" target="_blank" rel="noopener"><span>https://wg21.link/N3793</span></a><span>, 10/2013.</span></li>
+<li><span>James C. Dehnert and Alexander Stepanov. Fundamentals of Generic Programming. Lecture Notes in Computer Science volume 1766. </span><a href="http://stepanovpapers.com/DeSt98.pdf" target="_blank" rel="noopener"><span>http://stepanovpapers.com/DeSt98.pdf</span></a><span>, 1998.</span></li>
+<li><span>Steve Downey. P1255R12: A view of 0 or 1 elements: views::maybe. </span><a href="https://wg21.link/p1255r12" target="_blank" rel="noopener"><span>https://wg21.link/p1255r12</span></a><span>, 01/2024.</span></li>
+<li><span>Steve Downey and Peter Sommerlad. P2988R3: std::optional&lt;T&amp;&gt;. htts://wg21.link/P2988R3, 02/2024.</span></li>
+<li><span>Hinnant, Howard et al. "Direction for ISO C++." 15 October 2022, </span><a href="https://wg21.link/P2000R4" target="_blank" rel="noopener"><span>https://wg21.link/P2000R4</span></a><span>.</span></li>
+<li><span>Eric Niebler et al. P0896R4: The One Ranges Proposal. </span><a href="https://wg21.link/P0896R4" target="_blank" rel="noopener"><span>https://wg21.link/P0896R4</span></a><span>, 11/2018.</span></li>
+<li><span>David Sankel. P3023R1: C++ Should Be C++. </span><a href="https://wg21.link/P3023R1" target="_blank" rel="noopener"><span>https://wg21.link/P3023R1</span></a><span>, 10/2023.</span></li>
+<li><span>Wikipedia Foundation. Overchoice. </span><a href="https://en.wikipedia.org/wiki/Overchoice" target="_blank" rel="noopener"><span>https://en.wikipedia.org/wiki/Overchoice</span></a><span>, 27 February 2024.</span></li>
+<li><span>Beman Project. </span><a href="https://www.bemanproject.org/" target="_blank" rel="noopener"><span>https://www.bemanproject.org/</span></a></li>
+<li><span>Beman.Optional26. </span><a href="https://github.com/beman-project/Optional26" target="_blank" rel="noopener"><span>https://github.com/beman-project/Optional26</span></a></li>
+<li><span>Boost/stl_interfaces. </span><a href="https://github.com/boostorg/stl_interfaces" target="_blank" rel="noopener"><span>https://github.com/boostorg/stl_interfaces</span></a></li>
+<li><span>Zach Laine. P2727R4: std::iterator_interface. </span><a href="https://wg21.link/P2727R4" target="_blank" rel="noopener"><span>https://wg21.link/P2727R4</span></a><span>, 18 June 2022.</span></li>
+</ul><hr class="footnotes-sep"><section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><span>See the introduction of </span><a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3793.html" target="_blank" rel="noopener"><em><span>A proposal to add a utility class to represent optional objects</span></em></a> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><span>See </span><a href="https://github.com/search?q=%22.value_or%22+path%3A*.cpp&amp;type=code" target="_blank" rel="noopener"><span>GitHub search of '".value_or" path:*.cpp'</span></a> <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section></div>
+    <div class="ui-toc dropup unselectable hidden-print" style="display:none;">
+        <div class="pull-right dropdown">
+            <a id="tocLabel" class="ui-toc-label btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" title="Table of content">
+                <i class="fa fa-bars"></i>
+            </a>
+            <ul id="ui-toc" class="ui-toc-dropdown dropdown-menu" aria-labelledby="tocLabel">
+                <div class="toc"><ul class="nav">
+<li><a href="#Give-stdoptional-Range-Support" title="Give std::optional Range Support">Give std::optional Range Support</a><ul class="nav">
+<li><a href="#Abstract" title="Abstract">Abstract</a></li>
+<li><a href="#Changelog" title="Changelog">Changelog</a></li>
+<li><a href="#Introduction" title="Introduction">Introduction</a></li>
+<li><a href="#Principles" title="Principles">Principles</a></li>
+<li><a href="#Survey-of-existing-practice" title="Survey of existing practice">Survey of existing practice</a></li>
+<li><a href="#Proposal" title="Proposal">Proposal</a><ul class="nav">
+<li><a href="#To-view-or-not-to-view" title="To view or not to view">To view or not to view</a></li>
+<li><a href="#Choice-of-type-for-iterator" title="Choice of type for iterator">Choice of type for iterator</a></li>
+<li><a href="#Additional-iterator-types" title="Additional iterator types">Additional iterator types</a></li>
+</ul>
+</li>
+<li><a href="#Wording" title="Wording">Wording</a></li>
+<li><a href="#LEWG-feedback" title="LEWG feedback">LEWG feedback</a><ul class="nav">
+<li><a href="#P3168R0" title="P3168R0">P3168R0</a></li>
+<li><a href="#P3168R1" title="P3168R1">P3168R1</a></li>
+</ul>
+</li>
+<li><a href="#Implementation-experience" title="Implementation experience">Implementation experience</a><ul class="nav">
+<li><a href="#Initial-experiments" title="Initial experiments">Initial experiments</a></li>
+<li><a href="#BemanOptional26" title="Beman.Optional26">Beman.Optional26</a></li>
+</ul>
+</li>
+<li><a href="#Appendix-Comparison-P1255R12-vs-P3168R0" title="Appendix: Comparison P1255R12 vs P3168R0">Appendix: Comparison P1255R12 vs P3168R0</a><ul class="nav">
+<li><a href="#Optional-access" title="Optional access">Optional access</a></li>
+<li><a href="#Optional-assignment" title="Optional assignment">Optional assignment</a></li>
+<li><a href="#Range-chain-example-1" title="Range chain example (1)">Range chain example (1)</a></li>
+<li><a href="#Range-chain-example-2" title="Range chain example (2)">Range chain example (2)</a></li>
+<li><a href="#yield_if" title="yield_if">yield_if</a></li>
+</ul>
+</li>
+<li><a href="#References" title="References">References</a></li>
+</ul>
+</li>
+</ul>
+</div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+            </ul>
+        </div>
+    </div>
+    <div id="ui-toc-affix" class="ui-affix-toc ui-toc-dropdown unselectable hidden-print" data-spy="affix" style="top:17px;display:none;"  >
+        <div class="toc"><ul class="nav">
+<li><a href="#Give-stdoptional-Range-Support" title="Give std::optional Range Support">Give std::optional Range Support</a><ul class="nav">
+<li><a href="#Abstract" title="Abstract">Abstract</a></li>
+<li><a href="#Changelog" title="Changelog">Changelog</a></li>
+<li><a href="#Introduction" title="Introduction">Introduction</a></li>
+<li><a href="#Principles" title="Principles">Principles</a></li>
+<li><a href="#Survey-of-existing-practice" title="Survey of existing practice">Survey of existing practice</a></li>
+<li><a href="#Proposal" title="Proposal">Proposal</a><ul class="nav">
+<li><a href="#To-view-or-not-to-view" title="To view or not to view">To view or not to view</a></li>
+<li><a href="#Choice-of-type-for-iterator" title="Choice of type for iterator">Choice of type for iterator</a></li>
+<li><a href="#Additional-iterator-types" title="Additional iterator types">Additional iterator types</a></li>
+</ul>
+</li>
+<li><a href="#Wording" title="Wording">Wording</a></li>
+<li><a href="#LEWG-feedback" title="LEWG feedback">LEWG feedback</a><ul class="nav">
+<li><a href="#P3168R0" title="P3168R0">P3168R0</a></li>
+<li><a href="#P3168R1" title="P3168R1">P3168R1</a></li>
+</ul>
+</li>
+<li><a href="#Implementation-experience" title="Implementation experience">Implementation experience</a><ul class="nav">
+<li><a href="#Initial-experiments" title="Initial experiments">Initial experiments</a></li>
+<li><a href="#BemanOptional26" title="Beman.Optional26">Beman.Optional26</a></li>
+</ul>
+</li>
+<li><a href="#Appendix-Comparison-P1255R12-vs-P3168R0" title="Appendix: Comparison P1255R12 vs P3168R0">Appendix: Comparison P1255R12 vs P3168R0</a><ul class="nav">
+<li><a href="#Optional-access" title="Optional access">Optional access</a></li>
+<li><a href="#Optional-assignment" title="Optional assignment">Optional assignment</a></li>
+<li><a href="#Range-chain-example-1" title="Range chain example (1)">Range chain example (1)</a></li>
+<li><a href="#Range-chain-example-2" title="Range chain example (2)">Range chain example (2)</a></li>
+<li><a href="#yield_if" title="yield_if">yield_if</a></li>
+</ul>
+</li>
+<li><a href="#References" title="References">References</a></li>
+</ul>
+</li>
+</ul>
+</div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.6.0/gist-embed.min.js" integrity="sha256-KyF2D6xPIJUW5sUDSs93vWyZm+1RzIpKCexxElmxl8g=" crossorigin="anonymous" defer></script>
+    <script>
+        var markdown = $(".markdown-body");
+        //smooth all hash trigger scrolling
+        function smoothHashScroll() {
+            var hashElements = $("a[href^='#']").toArray();
+            for (var i = 0; i < hashElements.length; i++) {
+                var element = hashElements[i];
+                var $element = $(element);
+                var hash = element.hash;
+                if (hash) {
+                    $element.on('click', function (e) {
+                        // store hash
+                        var hash = this.hash;
+                        if ($(hash).length <= 0) return;
+                        // prevent default anchor click behavior
+                        e.preventDefault();
+                        // animate
+                        $('body, html').stop(true, true).animate({
+                            scrollTop: $(hash).offset().top
+                        }, 100, "linear", function () {
+                            // when done, add hash to url
+                            // (default click behaviour)
+                            window.location.hash = hash;
+                        });
+                    });
+                }
+            }
+        }
+
+        smoothHashScroll();
+        var toc = $('.ui-toc');
+        var tocAffix = $('.ui-affix-toc');
+        var tocDropdown = $('.ui-toc-dropdown');
+        //toc
+        tocDropdown.click(function (e) {
+            e.stopPropagation();
+        });
+
+        var enoughForAffixToc = true;
+
+        function generateScrollspy() {
+            $(document.body).scrollspy({
+                target: ''
+            });
+            $(document.body).scrollspy('refresh');
+            if (enoughForAffixToc) {
+                toc.hide();
+                tocAffix.show();
+            } else {
+                tocAffix.hide();
+                toc.show();
+            }
+            $(document.body).scroll();
+        }
+
+        function windowResize() {
+            //toc right
+            var paddingRight = parseFloat(markdown.css('padding-right'));
+            var right = ($(window).width() - (markdown.offset().left + markdown.outerWidth() - paddingRight));
+            toc.css('right', right + 'px');
+            //affix toc left
+            var newbool;
+            var rightMargin = (markdown.parent().outerWidth() - markdown.outerWidth()) / 2;
+            //for ipad or wider device
+            if (rightMargin >= 133) {
+                newbool = true;
+                var affixLeftMargin = (tocAffix.outerWidth() - tocAffix.width()) / 2;
+                var left = markdown.offset().left + markdown.outerWidth() - affixLeftMargin;
+                tocAffix.css('left', left + 'px');
+            } else {
+                newbool = false;
+            }
+            if (newbool != enoughForAffixToc) {
+                enoughForAffixToc = newbool;
+                generateScrollspy();
+            }
+        }
+        $(window).resize(function () {
+            windowResize();
+        });
+        $(document).ready(function () {
+            windowResize();
+            generateScrollspy();
+        });
+
+        //remove hash
+        function removeHash() {
+            window.location.hash = '';
+        }
+
+        var backtotop = $('.back-to-top');
+        var gotobottom = $('.go-to-bottom');
+
+        backtotop.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToTop)
+                scrollToTop();
+            removeHash();
+        });
+        gotobottom.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToBottom)
+                scrollToBottom();
+            removeHash();
+        });
+
+        var toggle = $('.expand-toggle');
+        var tocExpand = false;
+
+        checkExpandToggle();
+        toggle.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            tocExpand = !tocExpand;
+            checkExpandToggle();
+        })
+
+        function checkExpandToggle () {
+            var toc = $('.ui-toc-dropdown .toc');
+            var toggle = $('.expand-toggle');
+            if (!tocExpand) {
+                toc.removeClass('expand');
+                toggle.text('Expand all');
+            } else {
+                toc.addClass('expand');
+                toggle.text('Collapse all');
+            }
+        }
+
+        function scrollToTop() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: 0
+            }, 100, "linear");
+        }
+
+        function scrollToBottom() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: $(document.body)[0].scrollHeight
+            }, 100, "linear");
+        }
+    </script>
+</body>
+
+</html>
