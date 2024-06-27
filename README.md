@@ -20,7 +20,7 @@ Description: The standard library lacks facilities for optional types when doing
 * P3168R2:
   * [https://wg21.link/P3168R2](https://wg21.link/P3168R2), 2024-06-25
   * source: [P3168R2.md](./revisions/P3168R2.md)
-  * status: reviewed by LWG in Saint Louis 2024, forwarded to LWG Straw Polls.
+  * status: reviewed and approved by LWG in Saint Louis 2024, forwarded to LWG Straw Polls.
 
 Final status: TBD
   
