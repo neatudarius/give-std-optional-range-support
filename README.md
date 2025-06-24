@@ -20,19 +20,14 @@ Description: The standard library lacks facilities for optional types when doing
 * P3168R2:
   * [https://wg21.link/P3168R2](https://wg21.link/P3168R2), 2024-06-25
   * source: [P3168R2.md](./revisions/P3168R2.md)
-  * status: reviewed and approved by LWG in Saint Louis 2024, forwarded to LWG Straw Polls.
+  * implementation: [beman.optional](https://github.com/bemanproject/optional) (former `Beman.Optional26`).
+  * status: reviewed and approved by LWG in Saint Louis 2024, forwarded to LWG Straw Polls. Passed plenary in Saint Louis 2024.
 
-Final status: Accepted into C++26!!!
+Final status: Accepted into the C++26 Working Draft!!!
 
 ## Tracking Issues
 
-* [P3168 R2 Give std::optional Range Support](https://github.com/cplusplus/papers/issues/1831)
+* [cplusplus: P3168 R2 Give std::optional Range Support #1831](https://github.com/cplusplus/papers/issues/1831)
 * [[LWG motion 4 2024-06] P3168R2 Give std::optional Range Support](https://github.com/cplusplus/draft/pull/7106)
 * Compiler cupport: [cppreference: C++26 library features](https://en.cppreference.com/w/cpp/compiler_support#C.2B.2B26_library_features)
 
-## Implementation experience
-
-Implementation is done in [Beman.Optional26](https://github.com/beman-project/Optional26).
-
-
-TBD
